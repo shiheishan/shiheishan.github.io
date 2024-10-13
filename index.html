@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习计划</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .datetime-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .date, .time {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .plan {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #999;
+            margin-right: 10px;
+            vertical-align: middle;
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .checkbox::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .checkbox.checked {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .checkbox.checked::after {
+            transform: rotate(45deg) scale(1);
+            opacity: 1;
+        }
+        .task-text {
+            transition: color 0.3s ease;
+        }
+        .task-text.completed {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="datetime-container">
+        <div class="date" id="date"></div>
+        <div class="time" id="time"></div>
+    </div>
+    <div class="plan">
+        <h2>数学:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">练习册 72 ~ 73 页写会写的题</span></li>
+        </ul>
+        <h2>英语:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">导学 70 页第 3 题</span></li>
+            <li><span class="checkbox"></span><span class="task-text">背 2 单元 10 个单词</span></li>
+            <li><span class="checkbox"></span><span class="task-text">背笔记</span></li>
+        </ul>
+        <h2>地理:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">整理笔记</span></li>
+        </ul>
+        <h2>历史:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">整理笔记</span></li>
+        </ul>
+        <h2>物理:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">练习册 32 ~ 33 页</span></li>
+            <li><span class="checkbox"></span><span class="task-text">练习册 36 ~ 38 页</span></li>
+        </ul>
+        <h2>语文:</h2>
+        <ul>
+            <li><span class="checkbox"></span><span class="task-text">11</span></li>
+        </ul>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const dateString = now.toLocaleDateString('zh-CN', dateOptions).replace(/\//g, '-');
+            document.getElementById('date').textContent = dateString;
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // 添加复选框功能
+        document.querySelectorAll('.checkbox').forEach(checkbox => {
+            checkbox.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                const taskText = this.nextElementSibling;
+                taskText.classList.toggle('completed');
+            });
+        });
+    </script>
+</body>
+</html>
