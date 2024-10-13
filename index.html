@@ -14,6 +14,11 @@
             padding: 20px;
             background-color: #f9f9f9;
             color: #333;
+            opacity: 0;
+            transition: opacity 1s ease; /* 将开场动画时间延长到1秒 */
+        }
+        body.loaded {
+            opacity: 1;
         }
         .datetime-container {
             display: flex;
@@ -100,7 +105,7 @@
         .task-text::after {
             content: '';
             position: absolute;
-            bottom: 50%;
+            bottom: 45%; /* 将删除线稍微向下移动一些 */
             left: 0;
             height: 1px;
             background-color: #8E8E93;
@@ -118,14 +123,6 @@
         /* 添加逆向删除线动画 */
         .task-text.removing::after {
             transform-origin: right center;
-        }
-        /* 添加开场动画 */
-        body {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        body.loaded {
-            opacity: 1;
         }
     </style>
 </head>
@@ -194,7 +191,9 @@
             updateDateTime();
 
             // 添加页面加载动画
-            document.body.classList.add('loaded');
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 50); // 延时以确保CSS过渡效果生效
 
             // 添加复选框功能
             document.querySelectorAll('.checkbox').forEach(checkbox => {
