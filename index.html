@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>每日作业</title>
 <style>
-/* 保持之前的样式 */
 @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
 body {
     font-family: 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
@@ -34,6 +33,16 @@ body {
     border-radius: 18px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #1C1C1E;
+    font-size: 22px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.3s forwards;
 }
 ul {
     list-style-type: none;
@@ -92,45 +101,29 @@ li {
     transform: translate(-50%, -50%) rotate(-45deg) scale(1);
     opacity: 1;
 }
-/* 新增任务文本样式 */
 .task-text {
+    position: relative;
     font-size: 17px;
     color: #3C3C43;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
 }
-
 .task-text.completed {
     color: #8E8E93;
-}
-
-/* 新增逐字删除线动画 */
-.letter {
-    display: inline-block;
-    opacity: 1;
-    transition: text-decoration 0.5s ease;
-}
-
-.letter.completed {
     text-decoration: line-through;
 }
-
-/* 控制每一行的删除线动画延迟 */
-.line {
-    display: inline-block;
-    white-space: pre-wrap;
+.chart-container {
+    margin-top: 30px;
+    text-align: center;
 }
-
-.line.completed .letter {
-    animation: line-through 0.5s forwards;
+.chart {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
 }
-
-@keyframes line-through {
-    from {
-        text-decoration: none;
-    }
-    to {
-        text-decoration: line-through;
-    }
+.chart-text {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
 }
 </style>
 </head>
@@ -141,6 +134,10 @@ li {
 </div>
 <div class="plan" id="plan">
     <!-- 任务列表将由 JavaScript 动态生成 -->
+</div>
+<div class="chart-container">
+    <canvas id="taskChart" class="chart"></canvas>
+    <div class="chart-text" id="chartText"></div>
 </div>
 <script>
 function updateDateTime() {
@@ -186,4 +183,109 @@ document.addEventListener('DOMContentLoaded', function() {
             name: "政治",
             tasks: ["无"]
         },
-       
+        {
+            name: "物理",
+            tasks: ["无"]
+        },
+        {
+            name: "化学",
+            tasks: ["无"]
+        }
+    ];
+    const planContainer = document.getElementById('plan');
+    let animationDelay = 0;
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    subjects.forEach(subject => {
+        // 如果科目的所有任务都是“无”，则跳过该科目
+        const hasValidTasks = subject.tasks.some(task => task !== "无");
+        if (!hasValidTasks) return;
+
+        // 创建科目标题
+        const h2 = document.createElement('h2');
+        h2.textContent = subject.name;
+        h2.style.animationDelay = `${animationDelay}s`;
+        animationDelay += 0.1; // 增加延迟
+        planContainer.appendChild(h2);
+
+        // 创建任务列表
+        const ul = document.createElement('ul');
+        subject.tasks.forEach(task => {
+            if (task === "无") return; // 跳过任务为“无”的项
+            totalTasks++;
+            const li = document.createElement('li');
+            li.style.animationDelay = `${animationDelay}s`;
+            animationDelay += 0.1; // 增加延迟
+            const checkbox = document.createElement('span');
+            checkbox.classList.add('checkbox');
+            const taskText = document.createElement('span');
+            taskText.classList.add('task-text');
+            taskText.textContent = task;
+            li.appendChild(checkbox);
+            li.appendChild(taskText);
+            ul.appendChild(li);
+        });
+        planContainer.appendChild(ul);
+    });
+
+    // 添加复选框功能
+    document.querySelectorAll('.checkbox').forEach(checkbox => {
+        checkbox.addEventListener('click', function() {
+            const taskText = this.nextElementSibling;
+            if (this.classList.contains('checked')) {
+                // 取消勾选
+                this.classList.remove('checked');
+                taskText.classList.remove('completed');
+                completedTasks--;
+            } else {
+                // 勾选
+                this.classList.add('checked');
+                taskText.classList.add('completed');
+                completedTasks++;
+            }
+            updateChart();
+        });
+    });
+
+    // 初始化饼图
+    const ctx = document.getElementById('taskChart').getContext('2d');
+    let chart;
+    function updateChart() {
+        const incompleteTasks = totalTasks - completedTasks;
+        const data = {
+            labels: ['已完成', '未完成'],
+            datasets: [{
+                data: [completedTasks, incompleteTasks],
+                backgroundColor: ['#007AFF', '#D1D1D6']
+            }]
+        };
+        if (chart) {
+            chart.data.datasets[0].data = [completedTasks, incompleteTasks];
+            chart.update();
+        } else {
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        document.getElementById('chartText').textContent = `总任务数：${totalTasks}，已完成：${completedTasks}，未完成：${incompleteTasks}`;
+    }
+    // 初始化图表
+    updateChart();
+});
+// 引入 Chart.js 库
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
