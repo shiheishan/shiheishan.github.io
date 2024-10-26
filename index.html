@@ -66,7 +66,9 @@
             }
         }
         .checkbox {
-            display: inline-block;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             width: 24px;
             height: 24px;
             border: 2px solid #D1D1D6;
@@ -77,7 +79,6 @@
             position: relative;
             transition: background-color 0.3s ease, border-color 0.3s ease;
             background-color: #fff;
-            overflow: hidden;
             box-sizing: border-box;
         }
         .checkbox::after {
@@ -107,26 +108,65 @@
             font-size: 17px;
             color: #3C3C43;
             transition: color 0.3s ease;
+            display: inline-block;
         }
-        .task-text::after {
-            content: '';
-            position: absolute;
-            bottom: 45%;
-            left: 0;
-            height: 1px;
-            background-color: #8E8E93;
-            width: 0%;
-            transform-origin: left center;
-            transition: width 0.3s ease;
-        }
+        /* 删除线的实现方式调整 */
         .task-text.completed {
             color: #8E8E93;
         }
         .task-text.completed::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 50%;
             width: 100%;
+            height: 1px;
+            background-color: #8E8E93;
+            transform-origin: left center;
+            animation: lineThrough 0.3s forwards;
         }
         .task-text.removing::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 50%;
+            width: 100%;
+            height: 1px;
+            background-color: #8E8E93;
             transform-origin: right center;
+            animation: lineThroughReverse 0.3s forwards;
+        }
+        @keyframes lineThrough {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        @keyframes lineThroughReverse {
+            from { transform: scaleX(1); }
+            to { transform: scaleX(0); }
+        }
+        /* 甜甜圈图表样式 */
+        .chart-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .chart {
+            display: inline-block;
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .chart canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .chart .chart-info {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #333;
         }
     </style>
 </head>
@@ -137,6 +177,13 @@
     </div>
     <div class="plan" id="plan">
         <!-- 任务列表将由 JavaScript 动态生成 -->
+    </div>
+    <!-- 甜甜圈图表容器 -->
+    <div class="chart-container">
+        <div class="chart">
+            <canvas id="chartCanvas" width="150" height="150"></canvas>
+            <div class="chart-info" id="chartInfo"></div>
+        </div>
     </div>
     <script>
         function updateDateTime() {
@@ -159,15 +206,15 @@
             const subjects = [
                 {
                     name: "语文",
-                    tasks: ["背会《梦游天姥吟留别》"]
+                    tasks: ["无"]
                 },
                 {
                     name: "数学",
-                    tasks: ["练习册往后写"]
+                    tasks: ["练习册 72～73 页写会写的题"]
                 },
                 {
                     name: "英语",
-                    tasks: ["无"]
+                    tasks: ["导学 70 页 第 3 题", "背 2 单元 10 个单词", "背笔记"]
                 },
                 {
                     name: "地理",
@@ -175,7 +222,7 @@
                 },
                 {
                     name: "生物",
-                    tasks: ["无"]
+                    tasks: ["wu"] // 输入 'wu' 或 '无' 来隐藏该科目
                 },
                 {
                     name: "历史",
@@ -187,46 +234,55 @@
                 },
                 {
                     name: "物理",
-                    tasks: ["练习册 47～48 页"]
+                    tasks: ["练习册 32～33 页", "练习册 36～38 页"]
                 },
                 {
                     name: "化学",
-                    tasks: ["练习册 59～61 页"]
+                    tasks: ["无"]
                 }
             ];
 
             const planContainer = document.getElementById('plan');
             let animationDelay = 0;
+            let totalTasks = 0;
+            let completedTasks = 0;
 
             subjects.forEach(subject => {
-                // 创建科目标题
-                const h2 = document.createElement('h2');
-                h2.textContent = subject.name;
-                h2.style.animationDelay = `${animationDelay}s`;
-                animationDelay += 0.1; // 增加延迟
+                // 检查是否需要隐藏该科目
+                const shouldHideSubject = subject.tasks.length === 1 && (subject.tasks[0] === '无' || subject.tasks[0].toLowerCase() === 'wu');
 
-                planContainer.appendChild(h2);
-
-                // 创建任务列表
-                const ul = document.createElement('ul');
-                subject.tasks.forEach(task => {
-                    const li = document.createElement('li');
-
-                    li.style.animationDelay = `${animationDelay}s`;
+                if (!shouldHideSubject) {
+                    // 创建科目标题
+                    const h2 = document.createElement('h2');
+                    h2.textContent = subject.name;
+                    h2.style.animationDelay = `${animationDelay}s`;
                     animationDelay += 0.1; // 增加延迟
 
-                    const checkbox = document.createElement('span');
-                    checkbox.classList.add('checkbox');
+                    planContainer.appendChild(h2);
 
-                    const taskText = document.createElement('span');
-                    taskText.classList.add('task-text');
-                    taskText.textContent = task;
+                    // 创建任务列表
+                    const ul = document.createElement('ul');
+                    subject.tasks.forEach(task => {
+                        const li = document.createElement('li');
 
-                    li.appendChild(checkbox);
-                    li.appendChild(taskText);
-                    ul.appendChild(li);
-                });
-                planContainer.appendChild(ul);
+                        li.style.animationDelay = `${animationDelay}s`;
+                        animationDelay += 0.1; // 增加延迟
+
+                        const checkbox = document.createElement('span');
+                        checkbox.classList.add('checkbox');
+
+                        const taskText = document.createElement('span');
+                        taskText.classList.add('task-text');
+                        taskText.textContent = task;
+
+                        li.appendChild(checkbox);
+                        li.appendChild(taskText);
+                        ul.appendChild(li);
+
+                        totalTasks++; // 统计总任务数
+                    });
+                    planContainer.appendChild(ul);
+                }
             });
 
             // 添加复选框功能
@@ -239,17 +295,56 @@
                         taskText.classList.remove('completed');
                         taskText.classList.add('removing');
 
-                        // 为了实现从右到左的删除线动画，需重新触发动画
-                        void taskText.offsetWidth; // 强制重绘
+                        // 强制重绘
+                        void taskText.offsetWidth;
                         taskText.classList.remove('removing');
+
+                        completedTasks--;
+                        updateChart();
 
                     } else {
                         // 勾选
                         this.classList.add('checked');
                         taskText.classList.add('completed');
+
+                        completedTasks++;
+                        updateChart();
                     }
                 });
             });
+
+            // 初始化甜甜圈图表
+            const chartCanvas = document.getElementById('chartCanvas');
+            const ctx = chartCanvas.getContext('2d');
+            const chartInfo = document.getElementById('chartInfo');
+
+            function updateChart() {
+                const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
+                chartInfo.textContent = `${percentage}%`;
+
+                // 清除画布
+                ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+
+                // 绘制背景圆环
+                ctx.beginPath();
+                ctx.arc(75, 75, 70, 0, 2 * Math.PI);
+                ctx.strokeStyle = '#E6E6E6';
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.closePath();
+
+                // 绘制进度弧形
+                ctx.beginPath();
+                ctx.arc(75, 75, 70, -0.5 * Math.PI, (-0.5 + 2 * (completedTasks / totalTasks)) * Math.PI, false);
+                ctx.strokeStyle = '#007AFF';
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            // 初始更新图表
+            updateChart();
+
         });
     </script>
 </body>
