@@ -2,257 +2,254 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <!-- 其他头部内容可以在这里添加 -->
+    <!-- ...其他头部内容... -->
     <title>每日作业</title>
     <!-- 引入 Chart.js 库 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- CSS 样式 -->
     <style>
-        /* CSS 样式将在下面提供 */
+        /* CSS 样式 */
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
+
+        body {
+            font-family: 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .datetime-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #999;
+        }
+        .date, .time {
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .plan {
+            background-color: #fff;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #1C1C1E;
+            font-size: 22px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.3s forwards;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.3s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .checkbox {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #D1D1D6;
+            border-radius: 6px;
+            margin-right: 15px;
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+        .checkbox::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 5px;
+            border: solid #fff;
+            border-width: 0 0 2px 2px;
+            transform: rotate(-45deg) scale(0);
+            opacity: 0;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .checkbox.checked {
+            background-color: #007AFF;
+            border-color: #007AFF;
+        }
+        .checkbox.checked::after {
+            transform: translate(-50%, -50%) rotate(-45deg) scale(1);
+            opacity: 1;
+        }
+        .task-text {
+            position: relative;
+            font-size: 17px;
+            color: #3C3C43;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+        /* 删除线的实现方式调整 */
+        .task-text::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 50%;
+            width: 100%;
+            border-bottom: 2px solid #8E8E93;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.3s ease;
+        }
+        .task-text.completed::before {
+            transform: scaleX(1);
+        }
+        .task-text.removing::before {
+            transform-origin: right center;
+        }
+        .task-text.completed {
+            color: #8E8E93;
+        }
+
+        /* 科目标题删除线 */
+        .plan h2.completed {
+            color: #8E8E93;
+            position: relative;
+        }
+        .plan h2.completed::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 50%;
+            width: 100%;
+            border-bottom: 2px solid #8E8E93;
+            transform: scaleX(0);
+            transform-origin: left center;
+            animation: headerLineThrough 0.3s forwards;
+        }
+        @keyframes headerLineThrough {
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        /* 淡出动画 */
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+        .plan.fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        /* 甜甜圈图表样式 */
+        .chart-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .chart {
+            display: inline-block;
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .chart canvas {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .chart .chart-info {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .checkmark {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: relative;
+            background-color: #4CAF50;
+            transform: scale(0);
+            animation: popIn 0.5s forwards;
+        }
+        .checkmark:after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 9px;
+            width: 12px;
+            height: 6px;
+            border: solid white;
+            border-width: 0 0 2px 2px;
+            transform: rotate(-45deg);
+        }
+        @keyframes popIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* 完成消息样式 */
+        .completion-message-container {
+            display: none; /* 默认隐藏 */
+            text-align: center;
+            margin-top: 20px; /* 调整完成消息与图表的距离 */
+            animation: fadeIn 0.5s forwards;
+        }
+        .completion-message-container.show {
+            display: block; /* 显示消息容器 */
+        }
+        .completion-message p {
+            font-size: 24px;
+            color: #333;
+            margin: 10px 0; /* 调整行间距 */
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
-@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
-
-body {
-    font-family: 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    color: #333;
-}
-.datetime-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #999;
-}
-.date, .time {
-    background-color: #fff;
-    padding: 10px 15px;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.plan {
-    background-color: #fff;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    position: relative;
-    overflow: hidden;
-}
-h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #1C1C1E;
-    font-size: 22px;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.3s forwards;
-}
-ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-li {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.3s forwards;
-}
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-.checkbox {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 24px;
-    height: 24px;
-    border: 2px solid #D1D1D6;
-    border-radius: 6px;
-    margin-right: 15px;
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    background-color: #fff;
-    box-sizing: border-box;
-}
-.checkbox::after {
-    content: '';
-    position: absolute;
-    width: 10px;
-    height: 5px;
-    border: solid #fff;
-    border-width: 0 0 2px 2px;
-    transform: rotate(-45deg) scale(0);
-    opacity: 0;
-    left: 50%;
-    top: 50%;
-    transform-origin: center center;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-.checkbox.checked {
-    background-color: #007AFF;
-    border-color: #007AFF;
-}
-.checkbox.checked::after {
-    transform: translate(-50%, -50%) rotate(-45deg) scale(1);
-    opacity: 1;
-}
-.task-text {
-    position: relative;
-    font-size: 17px;
-    color: #3C3C43;
-    transition: color 0.3s ease;
-    display: inline-block;
-    word-wrap: break-word;
-    word-break: break-word;
-}
-/* 删除线的实现方式调整 */
-.task-text::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 50%;
-    width: 100%;
-    border-bottom: 2px solid #8E8E93;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.3s ease;
-}
-.task-text.completed::before {
-    transform: scaleX(1);
-}
-.task-text.removing::before {
-    transform-origin: right center;
-}
-.task-text.completed {
-    color: #8E8E93;
-}
-
-/* 科目标题删除线 */
-.plan h2.completed {
-    color: #8E8E93;
-    position: relative;
-}
-.plan h2.completed::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 50%;
-    width: 100%;
-    border-bottom: 2px solid #8E8E93;
-    transform: scaleX(0);
-    transform-origin: left center;
-    animation: headerLineThrough 0.3s forwards;
-}
-@keyframes headerLineThrough {
-    to {
-        transform: scaleX(1);
-    }
-}
-
-/* 淡出动画 */
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-}
-.plan.fade-out {
-    animation: fadeOut 0.5s forwards;
-}
-
-/* 甜甜圈图表样式 */
-.chart-container {
-    margin-top: 30px;
-    text-align: center;
-}
-.chart {
-    display: inline-block;
-    position: relative;
-    width: 150px;
-    height: 150px;
-}
-.chart canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-.chart .chart-info {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.checkmark {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    position: relative;
-    background-color: #4CAF50;
-    transform: scale(0);
-    animation: popIn 0.5s forwards;
-}
-.checkmark:after {
-    content: '';
-    position: absolute;
-    left: 12px;
-    top: 9px;
-    width: 12px;
-    height: 6px;
-    border: solid white;
-    border-width: 0 0 2px 2px;
-    transform: rotate(-45deg);
-}
-@keyframes popIn {
-    to {
-        transform: scale(1);
-    }
-}
-
-/* 完成消息样式 */
-.completion-message-container {
-    display: none; /* 默认隐藏 */
-    text-align: center;
-    margin-top: 20px; /* 调整完成消息与图表的距离 */
-    animation: fadeIn 0.5s forwards;
-}
-.completion-message-container.show {
-    display: block; /* 显示消息容器 */
-}
-.completion-message p {
-    font-size: 24px;
-    color: #333;
-    margin: 10px 0; /* 调整行间距 */
-}
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
 <body>
     <div class="datetime-container">
         <div class="date" id="date"></div>
@@ -268,309 +265,317 @@ li {
             <div class="chart-info" id="chartInfo"></div>
         </div>
     </div>
-    <!-- 完成消息容器 -->
+    <!-- 完成消息容器，放在甜甜圈图表之后 -->
     <div class="completion-message-container" id="completionMessageContainer">
         <div class="completion-message" id="completionMessage">
             <p>你已经完成今日所有任务</p>
             <p>请好好休息</p>
         </div>
     </div>
-    <!-- JavaScript 脚本 -->
     <script>
-        // JavaScript 代码将在下方提供
+        // JavaScript 代码
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const dateString = now.toLocaleDateString('zh-CN', dateOptions).replace(/\//g, '-');
+            document.getElementById('date').textContent = dateString;
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+
+            // 定义科目和作业数据
+            const subjects = [
+                {
+                    name: "语文",
+                    tasks: ["无"]
+                },
+                {
+                    name: "数学",
+                    tasks: ["练习册 72～73 页写会写的题"]
+                },
+                {
+                    name: "英语",
+                    tasks: ["导学 70 页 第 3 题", "背 2 单元 10 个单词", "背笔记"]
+                },
+                {
+                    name: "地理",
+                    tasks: ["整理笔记"]
+                },
+                {
+                    name: "生物",
+                    tasks: ["wu"]
+                },
+                {
+                    name: "历史",
+                    tasks: ["整理笔记"]
+                },
+                {
+                    name: "政治",
+                    tasks: ["无"]
+                },
+                {
+                    name: "物理",
+                    tasks: ["练习册 32～33 页", "练习册 36～38 页"]
+                },
+                {
+                    name: "化学",
+                    tasks: ["无"]
+                }
+            ];
+
+            const planContainer = document.getElementById('plan');
+            const chartCanvas = document.getElementById('chartCanvas');
+            const chartInfo = document.getElementById('chartInfo');
+            const chartElement = document.querySelector('.chart');
+            const completionMessageContainer = document.getElementById('completionMessageContainer');
+            let chart;
+            let totalTasks = 0;
+            let completedTasks = 0;
+            let taskElements = []; // 存储所有任务元素，便于操作
+            let completionTriggered = false; // 标记是否已触发完成动画
+
+            // 初始化页面
+            generateTasksAndChart();
+
+            // 添加双击事件监听器，实现页面重置
+            chartElement.addEventListener('dblclick', resetPage);
+
+            function generateTasksAndChart() {
+                planContainer.innerHTML = ''; // 清空计划容器
+                chartInfo.innerHTML = ''; // 清空图表信息
+                taskElements = []; // 重置任务元素数组
+                totalTasks = 0;
+                completedTasks = 0;
+                completionTriggered = false;
+
+                // 隐藏完成消息
+                completionMessageContainer.classList.remove('show');
+
+                let animationDelay = 0;
+
+                subjects.forEach(subject => {
+                    // 检查是否需要隐藏该科目
+                    const shouldHideSubject = subject.tasks.length === 1 && (subject.tasks[0] === '无' || subject.tasks[0].toLowerCase() === 'wu');
+
+                    if (!shouldHideSubject) {
+                        // 创建科目标题
+                        const h2 = document.createElement('h2');
+                        h2.textContent = subject.name;
+                        h2.style.animationDelay = `${animationDelay}s`;
+                        animationDelay += 0.1; // 增加延迟
+
+                        planContainer.appendChild(h2);
+
+                        // 创建任务列表
+                        const ul = document.createElement('ul');
+                        subject.tasks.forEach(task => {
+                            const li = document.createElement('li');
+
+                            li.style.animationDelay = `${animationDelay}s`;
+                            animationDelay += 0.1; // 增加延迟
+
+                            const checkbox = document.createElement('span');
+                            checkbox.classList.add('checkbox');
+
+                            const taskText = document.createElement('span');
+                            taskText.classList.add('task-text');
+                            taskText.textContent = task;
+
+                            li.appendChild(checkbox);
+                            li.appendChild(taskText);
+                            ul.appendChild(li);
+
+                            totalTasks++; // 统计总任务数
+
+                            // 存储任务元素
+                            taskElements.push({
+                                checkbox: checkbox,
+                                taskText: taskText
+                            });
+                        });
+                        planContainer.appendChild(ul);
+                    }
+                });
+
+                // 初始化 Chart.js 图表
+                initChart();
+
+                // 添加复选框功能
+                addCheckboxEventListeners();
+            }
+            function resetPage() {
+                // 重置图表
+                if (chart) {
+                    chart.destroy();
+                }
+                // 重置完成标志
+                completionTriggered = false;
+                // 显示 planContainer
+                planContainer.style.display = 'block';
+                // 重置计划容器样式
+                planContainer.classList.remove('fade-out');
+                // 重新生成任务列表和图表
+                generateTasksAndChart();
+            }
+
+            function initChart() {
+                const ctx = chartCanvas.getContext('2d');
+
+                // 获取设备像素比
+                const dpr = window.devicePixelRatio || 1;
+
+                // 设置 canvas 的实际像素大小
+                chartCanvas.width = 150 * dpr;
+                chartCanvas.height = 150 * dpr;
+                chartCanvas.style.width = '150px';
+                chartCanvas.style.height = '150px';
+
+                // 缩放 canvas 上下文，以适应高 DPI 屏幕
+                ctx.scale(dpr, dpr);
+
+                chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [completedTasks, totalTasks - completedTasks],
+                            backgroundColor: ['#007AFF', '#E6E6E6'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        cutout: '70%',
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true
+                        },
+                        plugins: {
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                });
+
+                updateChartInfo();
+            }
+
+            function updateChart() {
+                if (chart) {
+                    chart.data.datasets[0].data = [completedTasks, totalTasks - completedTasks];
+
+                    const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
+
+                    // 当完成百分比达到100%，将颜色改为绿色，否则为蓝色
+                    if (completedTasks === totalTasks && totalTasks !== 0) {
+                        chart.data.datasets[0].backgroundColor = ['#4CAF50', '#E6E6E6'];
+
+                        if (!completionTriggered) {
+                            completionTriggered = true;
+                            onCompletion(); // 触发完成动画
+                        }
+                    } else {
+                        chart.data.datasets[0].backgroundColor = ['#007AFF', '#E6E6E6'];
+                        if (completionTriggered) {
+                            completionTriggered = false;
+                        }
+                    }
+
+                    chart.update();
+                    updateChartInfo();
+                }
+            }
+
+            function updateChartInfo() {
+                const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
+
+                // 清空之前的内容
+                chartInfo.innerHTML = '';
+
+                if (percentage === 100 && totalTasks !== 0) {
+                    // 创建打勾动画
+                    const checkmark = document.createElement('div');
+                    checkmark.classList.add('checkmark');
+                    chartInfo.appendChild(checkmark);
+                } else {
+                    chartInfo.textContent = `${percentage}%`;
+                }
+            }
+
+            // 完成所有任务后的操作
+            function onCompletion() {
+                // 自动为所有未勾选的任务添加删除线和勾选
+                taskElements.forEach(taskElement => {
+                    const { checkbox, taskText } = taskElement;
+                    if (!checkbox.classList.contains('checked')) {
+                        checkbox.classList.add('checked');
+                        taskText.classList.add('completed');
+                    }
+                });
+
+                // 为所有科目标题添加删除线
+                const subjectHeaders = planContainer.querySelectorAll('h2');
+                subjectHeaders.forEach(header => {
+                    if (!header.classList.contains('completed')) {
+                        header.classList.add('completed');
+                    }
+                });
+
+                // 等待删除线动画完成
+                setTimeout(() => {
+                    // 添加淡出动画
+                    planContainer.classList.add('fade-out');
+
+                    // 等待淡出动画完成
+                    setTimeout(() => {
+                        // 隐藏 planContainer
+                        planContainer.style.display = 'none';
+
+                        // 显示完成消息
+                        completionMessageContainer.classList.add('show');
+
+                    }, 500); // 等待淡出动画完成
+
+                }, 400); // 等待删除线动画完成
+            }
+
+            function addCheckboxEventListeners() {
+                taskElements.forEach(taskElement => {
+                    const { checkbox, taskText } = taskElement;
+
+                    checkbox.addEventListener('click', function () {
+                        if (this.classList.contains('checked')) {
+                            // 取消勾选
+                            this.classList.remove('checked');
+                            taskText.classList.add('removing');
+                            taskText.classList.remove('completed');
+
+                            // 强制重绘
+                            void taskText.offsetWidth;
+                            taskText.classList.remove('removing');
+
+                            completedTasks--;
+                            updateChart();
+
+                        } else {
+                            // 勾选
+                            this.classList.add('checked');
+                            taskText.classList.add('completed');
+
+                            completedTasks++;
+                            updateChart();
+                        }
+                    });
+                });
+            }
+
+        });
     </script>
 </body>
 </html>
-<script>
-// JavaScript 代码
-function updateDateTime() {
-    const now = new Date();
-    const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    const dateString = now.toLocaleDateString('zh-CN', dateOptions).replace(/\//g, '-');
-    document.getElementById('date').textContent = dateString;
-
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    // 定义科目和作业数据
-    const subjects = [
-        {
-            name: "语文",
-            tasks: ["无"]
-        },
-        {
-            name: "数学",
-            tasks: ["练习册 72～73 页写会写的题"]
-        },
-        {
-            name: "英语",
-            tasks: ["导学 70 页 第 3 题", "背 2 单元 10 个单词", "背笔记"]
-        },
-        {
-            name: "地理",
-            tasks: ["整理笔记"]
-        },
-        {
-            name: "生物",
-            tasks: ["wu"]
-        },
-        {
-            name: "历史",
-            tasks: ["整理笔记"]
-        },
-        {
-            name: "政治",
-            tasks: ["无"]
-        },
-        {
-            name: "物理",
-            tasks: ["练习册 32～33 页", "练习册 36～38 页"]
-        },
-        {
-            name: "化学",
-            tasks: ["无"]
-        }
-    ];
-
-    const planContainer = document.getElementById('plan');
-    const chartCanvas = document.getElementById('chartCanvas');
-    const chartInfo = document.getElementById('chartInfo');
-    const chartElement = document.querySelector('.chart');
-    const completionMessageContainer = document.getElementById('completionMessageContainer');
-    let chart;
-    let totalTasks = 0;
-    let completedTasks = 0;
-    let taskElements = []; // 存储所有任务元素，便于操作
-    let completionTriggered = false; // 标记是否已触发完成动画
-
-    // 初始化页面
-    generateTasksAndChart();
-
-    // 添加双击事件监听器，实现页面重置
-    chartElement.addEventListener('dblclick', resetPage);
-
-    function generateTasksAndChart() {
-        planContainer.innerHTML = ''; // 清空计划容器
-        chartInfo.innerHTML = ''; // 清空图表信息
-        taskElements = []; // 重置任务元素数组
-        totalTasks = 0;
-        completedTasks = 0;
-        completionTriggered = false;
-
-        // 隐藏完成消息
-        completionMessageContainer.classList.remove('show');
-
-        let animationDelay = 0;
-
-        subjects.forEach(subject => {
-            // 检查是否需要隐藏该科目
-            const shouldHideSubject = subject.tasks.length === 1 && (subject.tasks[0] === '无' || subject.tasks[0].toLowerCase() === 'wu');
-
-            if (!shouldHideSubject) {
-                // 创建科目标题
-                const h2 = document.createElement('h2');
-                h2.textContent = subject.name;
-                h2.style.animationDelay = `${animationDelay}s`;
-                animationDelay += 0.1; // 增加延迟
-
-                planContainer.appendChild(h2);
-
-                // 创建任务列表
-                const ul = document.createElement('ul');
-                subject.tasks.forEach(task => {
-                    const li = document.createElement('li');
-
-                    li.style.animationDelay = `${animationDelay}s`;
-                    animationDelay += 0.1; // 增加延迟
-
-                    const checkbox = document.createElement('span');
-                    checkbox.classList.add('checkbox');
-
-                    const taskText = document.createElement('span');
-                    taskText.classList.add('task-text');
-                    taskText.textContent = task;
-
-                    li.appendChild(checkbox);
-                    li.appendChild(taskText);
-                    ul.appendChild(li);
-
-                    totalTasks++; // 统计总任务数
-
-                    // 存储任务元素
-                    taskElements.push({
-                        checkbox: checkbox,
-                        taskText: taskText
-                    });
-                });
-                planContainer.appendChild(ul);
-            }
-        });
-
-        // 初始化 Chart.js 图表
-        initChart();
-
-        // 添加复选框功能
-        addCheckboxEventListeners();
-    }
-    function resetPage() {
-        // 重置图表
-        if (chart) {
-            chart.destroy();
-        }
-        // 重置完成标志
-        completionTriggered = false;
-        // 显示 planContainer
-        planContainer.style.display = 'block';
-        // 重置计划容器样式
-        planContainer.classList.remove('fade-out');
-        // 重新生成任务列表和图表
-        generateTasksAndChart();
-    }
-
-    function initChart() {
-        const ctx = chartCanvas.getContext('2d');
-
-        chart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [completedTasks, totalTasks - completedTasks],
-                    backgroundColor: ['#007AFF', '#E6E6E6'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                cutout: '70%',
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    animateRotate: true,
-                    animateScale: true
-                },
-                plugins: {
-                    tooltip: {
-                        enabled: false
-                    }
-                }
-            }
-        });
-
-        updateChartInfo();
-    }
-
-    function updateChart() {
-        if (chart) {
-            chart.data.datasets[0].data = [completedTasks, totalTasks - completedTasks];
-
-            // 当完成百分比达到100%，将颜色改为绿色，否则为蓝色
-            if (completedTasks === totalTasks && totalTasks !== 0) {
-                chart.data.datasets[0].backgroundColor = ['#4CAF50', '#E6E6E6'];
-
-                if (!completionTriggered) {
-                    completionTriggered = true;
-                    onCompletion(); // 触发完成动画
-                }
-            } else {
-                chart.data.datasets[0].backgroundColor = ['#007AFF', '#E6E6E6'];
-                if (completionTriggered) {
-                    completionTriggered = false;
-                }
-            }
-
-            chart.update();
-            updateChartInfo();
-        }
-    }
-
-    function updateChartInfo() {
-        const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
-
-        // 清空之前的内容
-        chartInfo.innerHTML = '';
-
-        if (percentage === 100 && totalTasks !== 0) {
-            // 创建打勾动画
-            const checkmark = document.createElement('div');
-            checkmark.classList.add('checkmark');
-            chartInfo.appendChild(checkmark);
-        } else {
-            chartInfo.textContent = `${percentage}%`;
-        }
-    }
-
-    // 完成所有任务后的操作
-    function onCompletion() {
-        // 自动为所有未勾选的任务添加删除线和勾选
-        taskElements.forEach(taskElement => {
-            const { checkbox, taskText } = taskElement;
-            if (!checkbox.classList.contains('checked')) {
-                checkbox.classList.add('checked');
-                taskText.classList.add('completed');
-            }
-        });
-
-        // 为所有科目标题添加删除线
-        const subjectHeaders = planContainer.querySelectorAll('h2');
-        subjectHeaders.forEach(header => {
-            if (!header.classList.contains('completed')) {
-                header.classList.add('completed');
-            }
-        });
-
-        // 等待删除线动画完成
-        setTimeout(() => {
-            // 添加淡出动画
-            planContainer.classList.add('fade-out');
-
-            // 等待淡出动画完成
-            setTimeout(() => {
-                // 隐藏 planContainer
-                planContainer.style.display = 'none';
-
-                // 显示完成消息
-                completionMessageContainer.classList.add('show');
-
-            }, 500); // 等待淡出动画完成
-
-        }, 400); // 等待删除线动画完成
-    }
-
-    function addCheckboxEventListeners() {
-        taskElements.forEach(taskElement => {
-            const { checkbox, taskText } = taskElement;
-
-            checkbox.addEventListener('click', function () {
-                if (this.classList.contains('checked')) {
-                    // 取消勾选
-                    this.classList.remove('checked');
-                    taskText.classList.add('removing');
-                    taskText.classList.remove('completed');
-
-                    // 强制重绘
-                    void taskText.offsetWidth;
-                    taskText.classList.remove('removing');
-
-                    completedTasks--;
-                    updateChart();
-
-                } else {
-                    // 勾选
-                    this.classList.add('checked');
-                    taskText.classList.add('completed');
-
-                    completedTasks++;
-                    updateChart();
-                }
-            });
-        });
-    }
-
-});
-</script>
