@@ -2,7 +2,6 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <!-- ...其他头部内容... -->
     <title>每日作业</title>
     <!-- 引入 Chart.js 库 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -114,6 +113,8 @@
             color: #3C3C43;
             transition: color 0.3s ease;
             display: inline-block;
+            word-wrap: break-word;
+            word-break: break-word;
         }
         /* 删除线的实现方式调整 */
         .task-text::before {
@@ -182,9 +183,9 @@
             height: 150px;
         }
         .chart canvas {
-            position: relative;
-            width: 150px;
-            height: 150px;
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         .chart .chart-info {
             position: absolute;
@@ -346,7 +347,6 @@
 
             // 添加双击事件监听器，实现页面重置
             chartElement.addEventListener('dblclick', resetPage);
-
             function generateTasksAndChart() {
                 planContainer.innerHTML = ''; // 清空计划容器
                 chartInfo.innerHTML = ''; // 清空图表信息
@@ -428,18 +428,6 @@
             function initChart() {
                 const ctx = chartCanvas.getContext('2d');
 
-                // 获取设备像素比
-                const dpr = window.devicePixelRatio || 1;
-
-                // 设置 canvas 的实际像素大小
-                chartCanvas.width = 150 * dpr;
-                chartCanvas.height = 150 * dpr;
-                chartCanvas.style.width = '150px';
-                chartCanvas.style.height = '150px';
-
-                // 缩放 canvas 上下文，以适应高 DPI 屏幕
-                ctx.scale(dpr, dpr);
-
                 chart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -451,6 +439,8 @@
                     },
                     options: {
                         cutout: '70%',
+                        responsive: true,
+                        maintainAspectRatio: false,
                         animation: {
                             animateRotate: true,
                             animateScale: true
@@ -465,12 +455,9 @@
 
                 updateChartInfo();
             }
-
             function updateChart() {
                 if (chart) {
                     chart.data.datasets[0].data = [completedTasks, totalTasks - completedTasks];
-
-                    const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
 
                     // 当完成百分比达到100%，将颜色改为绿色，否则为蓝色
                     if (completedTasks === totalTasks && totalTasks !== 0) {
