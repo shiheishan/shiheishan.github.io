@@ -46,6 +46,7 @@
         .checkbox-container {
             display: flex;
             align-items: center;
+            margin-top: 5px;
         }
         .checkbox {
             margin-right: 15px;
@@ -82,26 +83,29 @@
             color: #1a5276;
             font-weight: 500;
             text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
-            position: relative; /* 添加定位属性，以便使用伪元素 */
-            transition: color 0.3s ease; /* 添加颜色过渡效果 */
+            position: relative;
+            transition: color 0.3s ease;
         }
         .score::after {
-            content: ""; /* 创建一个伪元素来绘制删除线 */
+            content: "";
             position: absolute;
-            top: 50%; /* 将伪元素垂直居中 */
+            top: 50%;
             left: 0;
             right: 0;
-            height: 2px; /* 设置删除线的高度 */
-            background-color: #a3a3a3; /* 设置删除线的颜色 */
-            transform: scaleX(0); /* 初始时宽度为0 */
-            transform-origin: left; /* 从左侧开始缩放 */
-            transition: transform 0.3s ease; /* 添加宽度过渡效果 */
+            height: 2px;
+            background-color: #a3a3a3;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
         }
         .completed {
-            color: #a3a3a3; /* 设置删除线颜色 */
+            color: #a3a3a3;
         }
         .completed::after {
-            transform: scaleX(1); /* 选中时宽度变为1，显示删除线 */
+            transform: scaleX(1);
+        }
+        .hidden {
+            display: none;
         }
     </style>
     <script>
@@ -128,71 +132,97 @@
 <body class="bg-gray-100">
     <div class="container">
         <h1 id="datetime"></h1>
-        <div class="space-y-4">
-            <div class="subject-item">
-                <span class="subject-name">语文：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
+        <div id="subjects-container" class="space-y-4">
             </div>
-            <div class="subject-item">
-                <span class="subject-name">数学：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">英语：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">地理：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">生物：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">历史：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">政治：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">物理：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-            <div class="subject-item">
-                <span class="subject-name">化学：</span>
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
-                    <span class="score">1</span>
-                </div>
-            </div>
-        </div>
     </div>
+
+    <script>
+       const subjects = [
+            {
+                name: "语文",
+                tasks: ["作文"],
+            },
+            {
+                name: "数学",
+                tasks: ["无wu"],
+            },
+            {
+                name: "英语",
+                tasks: ["背单词背笔记"],
+            },
+            {
+                name: "地理",
+                tasks: ["无wu"], 
+            },
+            {
+                name: "生物",
+                tasks: ["无wu"],
+            },
+            {
+                name: "历史",
+                tasks: ["无wu"],
+            },
+            {
+                name: "政治",
+                tasks: ["无wu"],
+            },
+            {
+                name: "物理",
+                tasks: ["无wu"],
+            },
+            {
+                name: "化学",
+                tasks: ["无wu"],
+            },
+        ];
+
+        const subjectsContainer = document.getElementById("subjects-container");
+
+        function createSubjectItem(subject) {
+            const subjectItem = document.createElement("div");
+            subjectItem.className = "subject-item";
+
+            const subjectName = document.createElement("span");
+            subjectName.className = "subject-name";
+            subjectName.textContent = subject.name + "：";
+
+            subjectItem.appendChild(subjectName);
+
+            let hasTasks = false; // 标记是否有非 "无wu" 的任务
+            subject.tasks.forEach(task => {
+                if (task !== "无wu") {
+                    hasTasks = true;
+                    const taskContainer = document.createElement("div");
+                    taskContainer.className = "checkbox-container";
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "checkbox mr-2";
+                    checkbox.onchange = function() {
+                        toggleCompleted(this);
+                    };
+
+                    const score = document.createElement("span");
+                    score.className = "score";
+                    score.textContent = task;
+
+                    taskContainer.appendChild(checkbox);
+                    taskContainer.appendChild(score);
+                    subjectItem.appendChild(taskContainer);
+                }
+            });
+
+            if (!hasTasks) {
+                subjectItem.classList.add('hidden'); // 如果没有非 "无wu" 的任务，则隐藏父任务
+            }
+
+            return subjectItem;
+        }
+
+        subjects.forEach(subject => {
+            const subjectItem = createSubjectItem(subject);
+            subjectsContainer.appendChild(subjectItem);
+        });
+    </script>
 </body>
 </html>
