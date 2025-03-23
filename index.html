@@ -1,568 +1,198 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>每日作业</title>
-    <!-- 引入 Chart.js 库 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作业展示公示栏</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS 样式 */
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
-
         body {
-            font-family: 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f7fa;
+        }
+        .container {
             max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            -webkit-box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            -moz-box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
-        .datetime-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #999;
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a5276;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
         }
-        .date, .time {
-            background-color: #fff;
-            padding: 10px 15px;
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        .subject-item {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #d0d0d0;
         }
-        .plan {
-            background-color: #fff;
-            border-radius: 18px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
+        .subject-item:last-child {
+            border-bottom: none;
         }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
+        .subject-name {
+            font-size: 20px;
             font-weight: 600;
-            color: #1C1C1E;
-            font-size: 22px;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeInUp 0.3s forwards;
+            color: #0b3854;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+            display: block;
         }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        li {
-            margin-bottom: 15px;
+        .checkbox-container {
             display: flex;
             align-items: center;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeInUp 0.3s forwards;
-        }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         .checkbox {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
+            margin-right: 15px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             width: 24px;
             height: 24px;
-            border: 2px solid #D1D1D6;
+            border: 2px solid #42a5f5;
             border-radius: 6px;
-            margin-right: 15px;
+            background-color: #ffffff;
             cursor: pointer;
-            flex-shrink: 0;
-            position: relative;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-            background-color: #fff;
-            box-sizing: border-box;
-        }
-        .checkbox::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 5px;
-            border: solid #fff;
-            border-width: 0 0 2px 2px;
-            transform: rotate(-45deg) scale(0);
-            opacity: 0;
-            left: 50%;
-            top: 50%;
-            transform-origin: center center;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .checkbox.checked {
-            background-color: #007AFF;
-            border-color: #007AFF;
-        }
-        .checkbox.checked::after {
-            transform: translate(-50%, -50%) rotate(-45deg) scale(1);
-            opacity: 1;
-        }
-        .task-text {
-            position: relative;
-            font-size: 17px;
-            color: #3C3C43;
-            transition: color 0.3s ease;
-            display: inline-block;
-            word-wrap: break-word;
-            word-break: break-word;
-        }
-        /* 删除线的实现方式调整 */
-        .task-text::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 50%;
-            width: 100%;
-            border-bottom: 2px solid #8E8E93;
-            transform: scaleX(0);
-            transform-origin: left center;
-            transition: transform 0.3s ease;
-        }
-        .task-text.completed::before {
-            transform: scaleX(1);
-        }
-        .task-text.removing::before {
-            transform-origin: right center;
-        }
-        .task-text.completed {
-            color: #8E8E93;
-        }
-
-        /* 科目标题删除线 */
-        .plan h2.completed {
-            color: #8E8E93;
-            position: relative;
-        }
-        .plan h2.completed::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 50%;
-            width: 100%;
-            border-bottom: 2px solid #8E8E93;
-            transform: scaleX(0);
-            transform-origin: left center;
-            animation: headerLineThrough 0.3s forwards;
-        }
-        @keyframes headerLineThrough {
-            to {
-                transform: scaleX(1);
-            }
-        }
-
-        /* 淡出动画 */
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-        }
-        .plan.fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
-
-        /* 甜甜圈图表样式 */
-        .chart-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .chart {
-            display: inline-block;
-            position: relative;
-            width: 150px;
-            height: 150px;
-        }
-        .chart canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        .chart .chart-info {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: #333;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
-        .checkmark {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            position: relative;
-            background-color: #4CAF50;
-            transform: scale(0);
-            animation: popIn 0.5s forwards;
+        .checkbox:checked {
+            background-color: #42a5f5;
+            border-color: #42a5f5;
         }
-        .checkmark:after {
-            content: '';
+        .checkbox:checked::before {
+            content: '✓';
+            font-size: 20px;
+            color: #ffffff;
+        }
+        .checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        .score {
+            font-size: 20px;
+            color: #1a5276;
+            font-weight: 500;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+            position: relative; /* 添加定位属性，以便使用伪元素 */
+            transition: color 0.3s ease; /* 添加颜色过渡效果 */
+        }
+        .score::after {
+            content: ""; /* 创建一个伪元素来绘制删除线 */
             position: absolute;
-            left: 12px;
-            top: 9px;
-            width: 12px;
-            height: 6px;
-            border: solid white;
-            border-width: 0 0 2px 2px;
-            transform: rotate(-45deg);
+            top: 50%; /* 将伪元素垂直居中 */
+            left: 0;
+            right: 0;
+            height: 2px; /* 设置删除线的高度 */
+            background-color: #a3a3a3; /* 设置删除线的颜色 */
+            transform: scaleX(0); /* 初始时宽度为0 */
+            transform-origin: left; /* 从左侧开始缩放 */
+            transition: transform 0.3s ease; /* 添加宽度过渡效果 */
         }
-        @keyframes popIn {
-            to {
-                transform: scale(1);
-            }
+        .completed {
+            color: #a3a3a3; /* 设置删除线颜色 */
         }
-
-        /* 完成消息样式 */
-        .completion-message-container {
-            display: none; /* 默认隐藏 */
-            text-align: center;
-            margin-top: 20px; /* 调整完成消息与图表的距离 */
-            animation: fadeIn 0.5s forwards;
-        }
-        .completion-message-container.show {
-            display: block; /* 显示消息容器 */
-        }
-        .completion-message p {
-            font-size: 24px;
-            color: #333;
-            margin: 10px 0; /* 调整行间距 */
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .completed::after {
+            transform: scaleX(1); /* 选中时宽度变为1，显示删除线 */
         }
     </style>
-</head>
-<body>
-    <div class="datetime-container">
-        <div class="date" id="date"></div>
-        <div class="time" id="time"></div>
-    </div>
-    <div class="plan" id="plan">
-        <!-- 任务列表将由 JavaScript 动态生成 -->
-    </div>
-    <!-- 甜甜圈图表容器 -->
-    <div class="chart-container">
-        <div class="chart">
-            <canvas id="chartCanvas"></canvas>
-            <div class="chart-info" id="chartInfo"></div>
-        </div>
-    </div>
-    <!-- 完成消息容器，放在甜甜圈图表之后 -->
-    <div class="completion-message-container" id="completionMessageContainer">
-        <div class="completion-message" id="completionMessage">
-            <p>你已经完成今日所有任务</p>
-            <p>请好好休息</p>
-        </div>
-    </div>
     <script>
-        // JavaScript 代码
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            const dateString = now.toLocaleDateString('zh-CN', dateOptions).replace(/\//g, '-');
-            document.getElementById('date').textContent = dateString;
-
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+        function toggleCompleted(checkbox) {
+            const span = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                span.classList.add('completed');
+            } else {
+                span.classList.remove('completed');
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            setInterval(updateDateTime, 1000);
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById("datetime").textContent = dateTimeString;
+        }
+
+        window.onload = function() {
             updateDateTime();
-
-            // 定义科目和作业数据
-            const subjects = [
-                {
-                    name: "语文",
-                    tasks: ["阅读 第4课"]
-                },
-                {
-                    name: "数学",
-                    tasks: ["无"]
-                },
-                {
-                    name: "英语",
-                    tasks: ["群里的作文抄本上 背下来", "书 44 页 1 题", "练习册 112 页 单词填空 A、B 篇"]
-                },
-                {
-                    name: "地理",
-                    tasks: ["群里的卷子"]
-                },
-                {
-                    name: "生物",
-                    tasks: ["无"]
-                },
-                {
-                    name: "历史",
-                    tasks: ["无"]
-                },
-                {
-                    name: "政治",
-                    tasks: ["无"]
-                },
-                {
-                    name: "物理",
-                    tasks: ["书 55 页 3 题（本）"]
-                },
-                {
-                    name: "化学",
-                    tasks: ["无"]
-                }
-            ];
-
-            const planContainer = document.getElementById('plan');
-            const chartCanvas = document.getElementById('chartCanvas');
-            const chartInfo = document.getElementById('chartInfo');
-            const chartElement = document.querySelector('.chart');
-            const completionMessageContainer = document.getElementById('completionMessageContainer');
-            let chart;
-            let totalTasks = 0;
-            let completedTasks = 0;
-            let taskElements = []; // 存储所有任务元素，便于操作
-            let completionTriggered = false; // 标记是否已触发完成动画
-
-            // 初始化页面
-            generateTasksAndChart();
-
-            // 添加双击事件监听器，实现页面重置
-            chartElement.addEventListener('dblclick', resetPage);
-            function generateTasksAndChart() {
-                planContainer.innerHTML = ''; // 清空计划容器
-                chartInfo.innerHTML = ''; // 清空图表信息
-                taskElements = []; // 重置任务元素数组
-                totalTasks = 0;
-                completedTasks = 0;
-                completionTriggered = false;
-
-                // 隐藏完成消息
-                completionMessageContainer.classList.remove('show');
-
-                let animationDelay = 0;
-
-                subjects.forEach(subject => {
-                    // 检查是否需要隐藏该科目
-                    const shouldHideSubject = subject.tasks.length === 1 && (subject.tasks[0] === '无' || subject.tasks[0].toLowerCase() === 'wu');
-
-                    if (!shouldHideSubject) {
-                        // 创建科目标题
-                        const h2 = document.createElement('h2');
-                        h2.textContent = subject.name;
-                        h2.style.animationDelay = `${animationDelay}s`;
-                        animationDelay += 0.1; // 增加延迟
-
-                        planContainer.appendChild(h2);
-
-                        // 创建任务列表
-                        const ul = document.createElement('ul');
-                        subject.tasks.forEach(task => {
-                            const li = document.createElement('li');
-
-                            li.style.animationDelay = `${animationDelay}s`;
-                            animationDelay += 0.1; // 增加延迟
-
-                            const checkbox = document.createElement('span');
-                            checkbox.classList.add('checkbox');
-
-                            const taskText = document.createElement('span');
-                            taskText.classList.add('task-text');
-                            taskText.textContent = task;
-
-                            li.appendChild(checkbox);
-                            li.appendChild(taskText);
-                            ul.appendChild(li);
-
-                            totalTasks++; // 统计总任务数
-
-                            // 存储任务元素
-                            taskElements.push({
-                                checkbox: checkbox,
-                                taskText: taskText
-                            });
-                        });
-                        planContainer.appendChild(ul);
-                    }
-                });
-
-                // 初始化 Chart.js 图表
-                initChart();
-
-                // 添加复选框功能
-                addCheckboxEventListeners();
-            }
-            function resetPage() {
-                // 重置图表
-                if (chart) {
-                    chart.destroy();
-                }
-                // 重置完成标志
-                completionTriggered = false;
-                // 显示 planContainer
-                planContainer.style.display = 'block';
-                // 重置计划容器样式
-                planContainer.classList.remove('fade-out');
-                // 重新生成任务列表和图表
-                generateTasksAndChart();
-            }
-
-            function initChart() {
-                const ctx = chartCanvas.getContext('2d');
-
-                chart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [completedTasks, totalTasks - completedTasks],
-                            backgroundColor: ['#007AFF', '#E6E6E6'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        cutout: '70%',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: {
-                            animateRotate: true,
-                            animateScale: true
-                        },
-                        plugins: {
-                            tooltip: {
-                                enabled: false
-                            }
-                        }
-                    }
-                });
-
-                updateChartInfo();
-            }
-            function updateChart() {
-                if (chart) {
-                    chart.data.datasets[0].data = [completedTasks, totalTasks - completedTasks];
-
-                    // 当完成百分比达到100%，将颜色改为绿色，否则为蓝色
-                    if (completedTasks === totalTasks && totalTasks !== 0) {
-                        chart.data.datasets[0].backgroundColor = ['#4CAF50', '#E6E6E6'];
-
-                        if (!completionTriggered) {
-                            completionTriggered = true;
-                            onCompletion(); // 触发完成动画
-                        }
-                    } else {
-                        chart.data.datasets[0].backgroundColor = ['#007AFF', '#E6E6E6'];
-                        if (completionTriggered) {
-                            completionTriggered = false;
-                        }
-                    }
-
-                    chart.update();
-                    updateChartInfo();
-                }
-            }
-
-            function updateChartInfo() {
-                const percentage = totalTasks === 0 ? 100 : Math.round((completedTasks / totalTasks) * 100);
-
-                // 清空之前的内容
-                chartInfo.innerHTML = '';
-
-                if (percentage === 100 && totalTasks !== 0) {
-                    // 创建打勾动画
-                    const checkmark = document.createElement('div');
-                    checkmark.classList.add('checkmark');
-                    chartInfo.appendChild(checkmark);
-                } else {
-                    chartInfo.textContent = `${percentage}%`;
-                }
-            }
-
-            // 完成所有任务后的操作
-            function onCompletion() {
-                // 自动为所有未勾选的任务添加删除线和勾选
-                taskElements.forEach(taskElement => {
-                    const { checkbox, taskText } = taskElement;
-                    if (!checkbox.classList.contains('checked')) {
-                        checkbox.classList.add('checked');
-                        taskText.classList.add('completed');
-                    }
-                });
-
-                // 为所有科目标题添加删除线
-                const subjectHeaders = planContainer.querySelectorAll('h2');
-                subjectHeaders.forEach(header => {
-                    if (!header.classList.contains('completed')) {
-                        header.classList.add('completed');
-                    }
-                });
-
-                // 等待删除线动画完成
-                setTimeout(() => {
-                    // 添加淡出动画
-                    planContainer.classList.add('fade-out');
-
-                    // 等待淡出动画完成
-                    setTimeout(() => {
-                        // 隐藏 planContainer
-                        planContainer.style.display = 'none';
-
-                        // 显示完成消息
-                        completionMessageContainer.classList.add('show');
-
-                    }, 500); // 等待淡出动画完成
-
-                }, 400); // 等待删除线动画完成
-            }
-
-            function addCheckboxEventListeners() {
-                taskElements.forEach(taskElement => {
-                    const { checkbox, taskText } = taskElement;
-
-                    checkbox.addEventListener('click', function () {
-                        if (this.classList.contains('checked')) {
-                            // 取消勾选
-                            this.classList.remove('checked');
-                            taskText.classList.add('removing');
-                            taskText.classList.remove('completed');
-
-                            // 强制重绘
-                            void taskText.offsetWidth;
-                            taskText.classList.remove('removing');
-
-                            completedTasks--;
-                            updateChart();
-
-                        } else {
-                            // 勾选
-                            this.classList.add('checked');
-                            taskText.classList.add('completed');
-
-                            completedTasks++;
-                            updateChart();
-                        }
-                    });
-                });
-            }
-
-        });
+        };
     </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <h1 id="datetime"></h1>
+        <div class="space-y-4">
+            <div class="subject-item">
+                <span class="subject-name">语文：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">数学：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">英语：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">地理：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">生物：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">历史：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">政治：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">物理：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+            <div class="subject-item">
+                <span class="subject-name">化学：</span>
+                <div class="checkbox-container">
+                    <input type="checkbox" class="checkbox mr-2" onchange="toggleCompleted(this)">
+                    <span class="score">1</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
