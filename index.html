@@ -9,13 +9,27 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #e0f7fa;
+            /* background-color: #e0f7fa; */ /* 移除静态背景色 */
+            animation: smooth-color-change 15s infinite alternate; /* 使用新的平滑过渡动画 */
+            background-size: 200% 200%;
         }
+
+        @keyframes smooth-color-change {
+            from {
+                background-image: linear-gradient(to right, #e0f7fa, #f0f4c3); /* 淡青色到淡黄色 */
+                background-position: 0% 50%;
+            }
+            to {
+                background-image: linear-gradient(to right, #f0f4c3, #e0f7fa);
+                background-position: 100% 50%;
+            }
+        }
+
         .container {
             max-width: 600px;
             margin: 20px auto;
             padding: 30px;
-            background-color: rgba(255, 255, 255, 0.8); /* 使用 rgba 设置半透明白色 */
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             -webkit-box-shadow: 0 4px 16px rgba(0,0,0,0.1);
