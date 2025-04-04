@@ -3,340 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作业展示公示栏</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>动态背景色任务清单</title>
+    <script src="https://cdn.tailwindcss.com/dist/browser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            animation: smooth-color-change 15s infinite alternate;
-            background-size: 200% 200%;
+        /* --- Animated Gradient Background --- */
+        @keyframes animateGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        @keyframes smooth-color-change {
-            from {
-                background-image: linear-gradient(to right, #e0f7fa, #f0f4c3);
-                background-position: 0% 50%;
-            }
-            to {
-                background-image: linear-gradient(to right, #f0f4c3, #e0f7fa);
-                background-position: 100% 50%;
-            }
+        body.animated-gradient {
+            /* Define the gradient colors */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            /* Set background size larger than viewport for smooth animation */
+            background-size: 400% 400%;
+            /* Apply the animation */
+            animation: animateGradient 15s ease infinite; /* 15s duration, smooth easing, infinite loop */
         }
+        /* --- End Animated Gradient Background --- */
 
-        .container {
-            max-width: 95%;
-            margin: 20px auto;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            -webkit-box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1a5276;
-            text-align: center;
-            margin-bottom: 25px;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-        }
-        .subject-item {
-            padding-bottom: 15px;
-            border-bottom: 1px solid #d0d0d0;
-        }
-        .subject-item:last-child {
-            border-bottom: none;
-        }
-        .subject-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #0b3854;
-            text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
-            display: block;
-            padding-right: 10px;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
-        }
-        .checkbox {
-            margin-right: 15px;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #42a5f5;
-            border-radius: 6px;
-            background-color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-        .checkbox:checked {
-            background-color: #42a5f5;
-            border-color: #42a5f5;
-        }
-        .checkbox:checked::before {
-            content: '✓';
-            font-size: 20px;
-            color: #ffffff;
-        }
-        .checkbox:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-        }
-        .score {
-            font-size: 20px;
-            color: #1a5276;
-            font-weight: 500;
-            text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+        /* Task text base style */
+        .task-text-span {
             position: relative;
-            transition: color 0.3s ease;
+            display: inline-block;
+            transition: color 0.3s ease-in-out;
         }
-        .score::after {
-            content: "";
+        /* Strikethrough pseudo-element (initially hidden) */
+        .task-text-span::after {
+            content: '';
             position: absolute;
-            top: 50%;
             left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #a3a3a3;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-        .completed {
-            color: #a3a3a3;
-        }
-        .completed::after {
-            transform: scaleX(1);
-        }
-        .hidden {
-            display: none;
-        }
-        #chart-container {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-        }
-        .completion-message {
-            position: fixed;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(100, 149, 237, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-            z-index: 10;
+            height: 1px;
+            background-color: #9ca3af; /* gray-400 */
+            width: 0;
+            transition: width 0.3s ease-in-out;
+            transform: translateY(-50%);
         }
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        /* Style when task is completed */
+        .task-text-span.task-completed {
+            color: #9ca3af; /* gray-400 */
         }
-        .hidden {
-            display: none;
+        /* Animate strikethrough width when task is completed */
+        .task-text-span.task-completed::after {
+            width: 100%;
+        }
+        /* Style for "No homework" message */
+        .no-tasks {
+            color: #6b7280; /* gray-500 */
+            font-style: italic;
+        }
+        /* Custom scrollbar (optional, for aesthetics) */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent; /* Track is transparent */
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #94a3b8; /* slate-400 */
+            border-radius: 20px;
         }
     </style>
     <script>
-        function toggleCompleted(checkbox) {
-            const span = checkbox.nextElementSibling;
-            if (checkbox.checked) {
-                span.classList.add('completed');
-            } else {
-                span.classList.remove('completed');
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
             }
-            updateChart();
         }
-
-        function updateDateTime() {
-            const now = new Date();
-            const dateTimeString = now.toLocaleString();
-            document.getElementById("datetime").textContent = dateTimeString;
-        }
-
-        window.onload = function() {
-            updateDateTime();
-        };
     </script>
 </head>
-<body class="bg-gray-100">
-    <div class="container">
-        <h1 id="datetime"></h1>
-        <div id="subjects-container" class="space-y-4">
+<body class="animated-gradient min-h-screen flex items-center justify-center p-4 font-sans">
+
+    <div class="w-full max-w-lg p-6 rounded-xl max-h-[85vh] overflow-y-auto custom-scrollbar bg-white/80 shadow-lg backdrop-blur-sm">
+
+        <h1 id="title-datetime" class="text-2xl font-bold text-center mb-6 text-gray-800"></h1>
+
+        <div id="subject-container" class="space-y-4">
             </div>
-        <div id="chart-container">
-            <canvas id="completion-chart"></canvas>
-        </div>
-        <div id="completion-message" class="completion-message hidden">
-            ✓ 全部完成
-        </div>
     </div>
 
     <script>
-        const subjects = [
-            {
-                name: "语文",
-                tasks: ["1"],
-            },
-            {
-                name: "数学",
-                tasks: ["1", "2"],
-            },
-            {
-                name: "英语",
-                tasks: ["1"],
-            },
-            {
-                name: "地理",
-                tasks: ["无wu"],
-            },
-            {
-                name: "生物",
-                tasks: ["1", "2", "3"],
-            },
-            {
-                name: "历史",
-                tasks: ["1"],
-            },
-            {
-                name: "政治",
-                tasks: ["1"],
-            },
-            {
-                name: "物理",
-                tasks: ["1"],
-            },
-            {
-                name: "化学",
-                tasks: ["1"],
-            },
+        // --- Daily Tasks Data ---
+        // **在这里修改每天的作业内容**
+        const dailyTasks = [
+            { subject: "语文", tasks: ["阅读《春晓》并背诵", "完成同步练习 P15", "预习 P16-P17"] },
+            { subject: "数学", tasks: ["习题册 3.2 (全部)", "预习下一章内容", "订正错题"] },
+            { subject: "英语", tasks: ["背诵单词 Unit 5 (A-F)", "听写句子 5条", "完成阅读理解一篇"] },
+            { subject: "地理", tasks: ["绘制亚洲气候类型图"] },
+            { subject: "生物", tasks: [] }, // 今天生物没有作业
+            { subject: "历史", tasks: ["复习第一次世界大战章节", "整理笔记"] },
+            { subject: "政治", tasks: ["阅读材料，思考讨论题"] },
+            { subject: "物理", tasks: ["完成实验报告《测量小灯泡功率》", "复习欧姆定律"] },
+            { subject: "化学", tasks: ["复习元素周期表前20号元素", "完成练习题"] }
         ];
+        // --- End of Daily Tasks Data ---
 
-        const subjectsContainer = document.getElementById("subjects-container");
-        const completionChartCtx = document.getElementById("completion-chart").getContext("2d");
-        let completionChart;
-        const completionMessage = document.getElementById("completion-message");
 
-        function createSubjectItem(subject) {
-            const subjectItem = document.createElement("div");
-            subjectItem.className = "subject-item";
-
-            const subjectName = document.createElement("span");
-            subjectName.className = "subject-name";
-            subjectName.textContent = subject.name + "：";
-
-            subjectItem.appendChild(subjectName);
-
-            let hasTasks = false;
-            subject.tasks.forEach(task => {
-                if (task !== "无wu") {
-                    hasTasks = true;
-                    const taskContainer = document.createElement("div");
-                    taskContainer.className = "checkbox-container";
-
-                    const checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.className = "checkbox mr-2";
-                    checkbox.onchange = function () {
-                        toggleCompleted(this);
-                    };
-
-                    const score = document.createElement("span");
-                    score.className = "score";
-                    score.textContent = task;
-
-                    taskContainer.appendChild(checkbox);
-                    taskContainer.appendChild(score);
-                    subjectItem.appendChild(taskContainer);
-                }
-            });
-
-            if (!hasTasks) {
-                subjectItem.classList.add("hidden");
-            }
-
-            return subjectItem;
+        // --- Set Page Load Time ---
+        const dateTimeElement = document.getElementById('title-datetime');
+        function setLoadTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const formattedDateTime = `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+            dateTimeElement.textContent = formattedDateTime;
         }
+        setLoadTime(); // Set time on load
 
-        subjects.forEach(subject => {
-            const subjectItem = createSubjectItem(subject);
-            subjectsContainer.appendChild(subjectItem);
-        });
 
-        function initializeChart() {
-            completionChart = new Chart(completionChartCtx, {
-                type: "doughnut",
-                data: {
-                    labels: ["Completed", "Remaining"],
-                    datasets: [
-                        {
-                            label: "Completion",
-                            data: [0, 1],
-                            backgroundColor: ["#81c784", "#d0d0d0"],
-                            borderWidth: 0,
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false,
-                    },
-                    animation: {
-                        duration: 1000,
-                    },
-                },
-            });
-        }
+        // --- Generate Subject List and Handle Strikethrough ---
+        const container = document.getElementById('subject-container');
 
-        function updateChart() {
-            let completedTasks = 0;
-            let totalTasks = 0;
-            let allCompleted = true;
+        dailyTasks.forEach((subjectData, subjectIndex) => {
+            const subjectDiv = document.createElement('div');
+            const title = document.createElement('h2');
+            title.className = "text-xl font-semibold mb-3 text-gray-700";
+            title.textContent = subjectData.subject;
+            subjectDiv.appendChild(title);
 
-            const checkboxes = document.querySelectorAll('.checkbox-container input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                totalTasks++;
-                if (checkbox.checked) {
-                    completedTasks++;
-                } else {
-                    allCompleted = false;
-                }
-            });
+            const taskList = document.createElement('ul');
+            taskList.className = "space-y-2"; // Spacing between task items
 
-            const completionPercentage = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
-
-            completionChart.data.datasets[0].data = [completionPercentage, 100 - completionPercentage];
-            completionChart.update();
-
-            if (allCompleted) {
-                completionMessage.classList.remove("hidden");
-                setTimeout(() => {
-                    completionMessage.classList.add("hidden");
-                }, 3000);
+            if (subjectData.tasks.length === 0) {
+                const noTaskItem = document.createElement('li');
+                noTaskItem.className = "no-tasks pl-5";
+                noTaskItem.textContent = "今天没有作业";
+                taskList.appendChild(noTaskItem);
             } else {
-                completionMessage.classList.add("hidden");
-            }
-        }
+                subjectData.tasks.forEach((taskTextContent, taskIndex) => {
+                    const taskId = `task-${subjectIndex}-${taskIndex}`;
+                    const taskItem = document.createElement('li');
+                    taskItem.className = "flex items-center bg-slate-100 p-3 rounded-lg"; // Task item background
 
-        window.onload = function () {
-            updateDateTime();
-            initializeChart();
-            updateChart();
-        };
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = taskId;
+                    checkbox.className = 'h-4 w-4 shrink-0 rounded-sm border border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 checked:bg-blue-600 checked:border-transparent';
+
+                    const label = document.createElement('label');
+                    label.htmlFor = taskId;
+                    label.className = "flex items-center cursor-pointer w-full";
+
+                    const taskText = document.createElement('span');
+                    taskText.className = "ml-3 text-gray-700 task-text-span";
+                    taskText.textContent = taskTextContent;
+
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            taskText.classList.add('task-completed');
+                        } else {
+                            taskText.classList.remove('task-completed');
+                        }
+                    });
+
+                    // Assemble the task item
+                    taskItem.appendChild(checkbox);
+                    label.appendChild(taskText);
+                    taskItem.appendChild(label);
+                    taskList.appendChild(taskItem); // Add li to ul
+                });
+            }
+
+            subjectDiv.appendChild(taskList); // Add ul to subject div
+            container.appendChild(subjectDiv);
+
+            // Separator line
+            if (subjectIndex < dailyTasks.length - 1) {
+                const hr = document.createElement('hr');
+                hr.className = "border-gray-300/70 my-4";
+                container.appendChild(hr);
+            }
+        });
     </script>
+
 </body>
 </html>
