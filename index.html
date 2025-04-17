@@ -1,1 +1,231 @@
-1
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作业展示公示栏</title>
+    <style>
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f2f2f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+        .subject {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(209, 213, 219, 0.5);
+        }
+        .subject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .subject-title {
+            font-weight: 600;
+            color: #1d1d1f;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .assignment {
+            padding-left: 20px;
+            color: #424245;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+        .task-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #a1a1a6;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .task-checkbox:checked {
+            border-color: #0071e3;
+            background-color: #0071e3;
+        }
+        .task-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .task-text {
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        .task-checkbox:checked + .task-text {
+            color: #a1a1a6;
+        }
+        .task-checkbox:checked + .task-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -2px;
+            right: -2px;
+            height: 2px;
+            background-color: #a1a1a6;
+            animation: strike 0.5s ease-out forwards;
+        }
+        @keyframes strike {
+            0% {
+                width: 0;
+                left: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #86868b;
+            padding: 15px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>作业展示公示栏</h1>
+        
+        <div class="subject">
+            <div class="subject-title">语文：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">数学：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">英语：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">地理：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">生物：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">历史：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">政治：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">物理：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">化学：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="footer">
+            更新日期：<span id="current-date"></span>
+        </div>
+    </div>
+
+() + 1;
+        const day = now.getDate();
+        document.getElementById('current-date').textContent = 
+            `${year}年${month}月${day}日`;
+    </script>
+</body>
+</html>
