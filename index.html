@@ -3,191 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动态背景色任务清单</title>
-    <script src="https://cdn.tailwindcss.com/dist/browser.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>作业展示公示栏</title>
     <style>
-        /* --- Animated Gradient Background --- */
-        @keyframes animateGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f2f2f7;
+            margin: 0;
+            padding: 20px;
         }
-
-        body.animated-gradient {
-            /* Define the gradient colors */
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            /* Set background size larger than viewport for smooth animation */
-            background-size: 400% 400%;
-            /* Apply the animation */
-            animation: animateGradient 15s ease infinite; /* 15s duration, smooth easing, infinite loop */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
-        /* --- End Animated Gradient Background --- */
-
-        /* Task text base style */
-        .task-text-span {
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+        .subject {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(209, 213, 219, 0.5);
+        }
+        .subject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .subject-title {
+            font-weight: 600;
+            color: #1d1d1f;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .assignment {
+            padding-left: 20px;
+            color: #424245;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+        .task-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #a1a1a6;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
             position: relative;
-            display: inline-block;
-            transition: color 0.3s ease-in-out;
+            transition: all 0.3s ease;
+            background-color: transparent;
         }
-        /* Strikethrough pseudo-element (initially hidden) */
-        .task-text-span::after {
+        .task-checkbox:checked {
+            border-color: #0071e3;
+            background-color: #0071e3;
+        }
+        .task-checkbox:checked::after {
             content: '';
             position: absolute;
-            left: 0;
-            top: 50%;
-            height: 1px;
-            background-color: #9ca3af; /* gray-400 */
-            width: 0;
-            transition: width 0.3s ease-in-out;
-            transform: translateY(-50%);
-        }
-        /* Style when task is completed */
-        .task-text-span.task-completed {
-            color: #9ca3af; /* gray-400 */
-        }
-        /* Animate strikethrough width when task is completed */
-        .task-text-span.task-completed::after {
-            width: 100%;
-        }
-        /* Style for "No homework" message */
-        .no-tasks {
-            color: #6b7280; /* gray-500 */
-            font-style: italic;
-        }
-        /* Custom scrollbar (optional, for aesthetics) */
-        .custom-scrollbar::-webkit-scrollbar {
+            left: 6px;
+            top: 2px;
             width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent; /* Track is transparent */
+        .task-text {
+            transition: all 0.5s ease;
+            position: relative;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #94a3b8; /* slate-400 */
-            border-radius: 20px;
+        .task-checkbox:checked + .task-text {
+            color: #a1a1a6;
+        }
+        .task-checkbox:checked + .task-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -2px;
+            right: -2px;
+            height: 2px;
+            background-color: #a1a1a6;
+            animation: strike 0.5s ease-out forwards;
+        }
+        @keyframes strike {
+            0% {
+                width: 0;
+                left: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #86868b;
+            padding: 15px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
 </head>
-<body class="animated-gradient min-h-screen flex items-center justify-center p-4 font-sans">
-
-    <div class="w-full max-w-lg p-6 rounded-xl max-h-[85vh] overflow-y-auto custom-scrollbar bg-white/80 shadow-lg backdrop-blur-sm">
-
-        <h1 id="title-datetime" class="text-2xl font-bold text-center mb-6 text-gray-800"></h1>
-
-        <div id="subject-container" class="space-y-4">
+<body>
+    <div class="container">
+        <h1>作业展示公示栏</h1>
+        
+        <div class="subject">
+            <div class="subject-title">语文：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
             </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">数学：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">英语：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">地理：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">生物：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">历史：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">政治：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">物理：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="subject">
+            <div class="subject-title">化学：</div>
+            <div class="assignment">
+                <label class="task-item">
+                    <input type="checkbox" class="task-checkbox">
+                    <span class="task-text">1</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="footer">
+            更新日期：<span id="current-date"></span>
+        </div>
     </div>
 
-    <script>
-        // --- Daily Tasks Data ---
-        // **在这里修改每天的作业内容**
-        const dailyTasks = [
-            { subject: "语文", tasks: ["阅读《春晓》并背诵", "完成同步练习 P15", "预习 P16-P17"] },
-            { subject: "数学", tasks: ["习题册 3.2 (全部)", "预习下一章内容", "订正错题"] },
-            { subject: "英语", tasks: ["背诵单词 Unit 5 (A-F)", "听写句子 5条", "完成阅读理解一篇"] },
-            { subject: "地理", tasks: ["绘制亚洲气候类型图"] },
-            { subject: "生物", tasks: [] }, // 今天生物没有作业
-            { subject: "历史", tasks: ["复习第一次世界大战章节", "整理笔记"] },
-            { subject: "政治", tasks: ["阅读材料，思考讨论题"] },
-            { subject: "物理", tasks: ["完成实验报告《测量小灯泡功率》", "复习欧姆定律"] },
-            { subject: "化学", tasks: ["复习元素周期表前20号元素", "完成练习题"] }
-        ];
-        // --- End of Daily Tasks Data ---
-
-
-        // --- Set Page Load Time ---
-        const dateTimeElement = document.getElementById('title-datetime');
-        function setLoadTime() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            const formattedDateTime = `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
-            dateTimeElement.textContent = formattedDateTime;
-        }
-        setLoadTime(); // Set time on load
-
-
-        // --- Generate Subject List and Handle Strikethrough ---
-        const container = document.getElementById('subject-container');
-
-        dailyTasks.forEach((subjectData, subjectIndex) => {
-            const subjectDiv = document.createElement('div');
-            const title = document.createElement('h2');
-            title.className = "text-xl font-semibold mb-3 text-gray-700";
-            title.textContent = subjectData.subject;
-            subjectDiv.appendChild(title);
-
-            const taskList = document.createElement('ul');
-            taskList.className = "space-y-2"; // Spacing between task items
-
-            if (subjectData.tasks.length === 0) {
-                const noTaskItem = document.createElement('li');
-                noTaskItem.className = "no-tasks pl-5";
-                noTaskItem.textContent = "今天没有作业";
-                taskList.appendChild(noTaskItem);
-            } else {
-                subjectData.tasks.forEach((taskTextContent, taskIndex) => {
-                    const taskId = `task-${subjectIndex}-${taskIndex}`;
-                    const taskItem = document.createElement('li');
-                    taskItem.className = "flex items-center bg-slate-100 p-3 rounded-lg"; // Task item background
-
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = taskId;
-                    checkbox.className = 'h-4 w-4 shrink-0 rounded-sm border border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 checked:bg-blue-600 checked:border-transparent';
-
-                    const label = document.createElement('label');
-                    label.htmlFor = taskId;
-                    label.className = "flex items-center cursor-pointer w-full";
-
-                    const taskText = document.createElement('span');
-                    taskText.className = "ml-3 text-gray-700 task-text-span";
-                    taskText.textContent = taskTextContent;
-
-                    checkbox.addEventListener('change', function() {
-                        if (this.checked) {
-                            taskText.classList.add('task-completed');
-                        } else {
-                            taskText.classList.remove('task-completed');
-                        }
-                    });
-
-                    // Assemble the task item
-                    taskItem.appendChild(checkbox);
-                    label.appendChild(taskText);
-                    taskItem.appendChild(label);
-                    taskList.appendChild(taskItem); // Add li to ul
-                });
-            }
-
-            subjectDiv.appendChild(taskList); // Add ul to subject div
-            container.appendChild(subjectDiv);
-
-            // Separator line
-            if (subjectIndex < dailyTasks.length - 1) {
-                const hr = document.createElement('hr');
-                hr.className = "border-gray-300/70 my-4";
-                container.appendChild(hr);
-            }
-        });
+() + 1;
+        const day = now.getDate();
+        document.getElementById('current-date').textContent = 
+            `${year}年${month}月${day}日`;
     </script>
-
 </body>
 </html>
