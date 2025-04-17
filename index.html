@@ -127,94 +127,109 @@
     <div class="container">
         <h1>作业展示公示栏</h1>
         
-        <div class="subject">
+        <div class="subject" id="subject-yuwen">
             <div class="subject-title">语文：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-yuwen">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('yuwen')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-shuxue">
             <div class="subject-title">数学：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-shuxue">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('shuxue')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-yingyu">
             <div class="subject-title">英语：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-yingyu">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('yingyu')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-dili">
             <div class="subject-title">地理：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-dili">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('dili')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-shengwu">
             <div class="subject-title">生物：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-shengwu">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('shengwu')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-lishi">
             <div class="subject-title">历史：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-lishi">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('lishi')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-zhengzhi">
             <div class="subject-title">政治：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-zhengzhi">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('zhengzhi')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-wuli">
             <div class="subject-title">物理：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-wuli">
+                <!-- 子任务将在这里动态添加 -->
+            </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('wuli')">添加</button>
             </div>
         </div>
         
-        <div class="subject">
+        <div class="subject" id="subject-huaxue">
             <div class="subject-title">化学：</div>
-            <div class="assignment">
-                <label class="task-item">
-                    <input type="checkbox" class="task-checkbox">
-                    <span class="task-text">1</span>
-                </label>
+            <div class="assignment" id="assignment-huaxue">
+                <!-- 子任务将在这里动态添加 -->
             </div>
+            <div class="task-controls">
+                <input type="text" class="new-task-input" placeholder="添加新任务...">
+                <button class="add-task-btn" onclick="addTask('huaxue')">添加</button>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="edit-mode-btn" onclick="toggleEditMode()">编辑模式</button>
+            <button id="save-btn" onclick="saveData()">保存</button>
+            <button id="clear-btn" onclick="clearCompleted()">清除已完成</button>
         </div>
         
         <div class="footer">
