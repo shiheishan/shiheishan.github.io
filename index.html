@@ -127,109 +127,67 @@
     <div class="container">
         <h1>作业展示公示栏</h1>
         
-        <div class="subject" id="subject-yuwen">
+        <div class="subject">
             <div class="subject-title">语文：</div>
-            <div class="assignment" id="assignment-yuwen">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('yuwen')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-shuxue">
+        <div class="subject">
             <div class="subject-title">数学：</div>
-            <div class="assignment" id="assignment-shuxue">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('shuxue')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-yingyu">
+        <div class="subject">
             <div class="subject-title">英语：</div>
-            <div class="assignment" id="assignment-yingyu">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('yingyu')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-dili">
+        <div class="subject">
             <div class="subject-title">地理：</div>
-            <div class="assignment" id="assignment-dili">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('dili')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-shengwu">
+        <div class="subject">
             <div class="subject-title">生物：</div>
-            <div class="assignment" id="assignment-shengwu">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('shengwu')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-lishi">
+        <div class="subject">
             <div class="subject-title">历史：</div>
-            <div class="assignment" id="assignment-lishi">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('lishi')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-zhengzhi">
+        <div class="subject">
             <div class="subject-title">政治：</div>
-            <div class="assignment" id="assignment-zhengzhi">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('zhengzhi')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-wuli">
+        <div class="subject">
             <div class="subject-title">物理：</div>
-            <div class="assignment" id="assignment-wuli">
-                <!-- 子任务将在这里动态添加 -->
-            </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('wuli')">添加</button>
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
         </div>
         
-        <div class="subject" id="subject-huaxue">
+        <div class="subject">
             <div class="subject-title">化学：</div>
-            <div class="assignment" id="assignment-huaxue">
-                <!-- 子任务将在这里动态添加 -->
+            <div class="assignment">
+                <!-- 子任务将通过JavaScript动态生成 -->
             </div>
-            <div class="task-controls">
-                <input type="text" class="new-task-input" placeholder="添加新任务...">
-                <button class="add-task-btn" onclick="addTask('huaxue')">添加</button>
-            </div>
-        </div>
-        
-        <div class="action-buttons">
-            <button id="edit-mode-btn" onclick="toggleEditMode()">编辑模式</button>
-            <button id="save-btn" onclick="saveData()">保存</button>
-            <button id="clear-btn" onclick="clearCompleted()">清除已完成</button>
         </div>
         
         <div class="footer">
@@ -237,10 +195,105 @@
         </div>
     </div>
 
-() + 1;
-        const day = now.getDate();
-        document.getElementById('current-date').textContent = 
-            `${year}年${month}月${day}日`;
+    <script>
+        // 作业数据 - 在这里修改各科目的子任务
+        const homeworkData = {
+            "语文": [
+                "背诵古诗五首",
+                "完成课后习题",
+                "阅读理解练习"
+            ],
+            "数学": [
+                "完成教材P35-37习题",
+                "复习二次函数"
+            ],
+            "英语": [
+                "单词听写预习",
+                "完成阅读理解"
+            ],
+            "地理": [
+                "预习下一章节"
+            ],
+            "生物": [
+                "完成实验报告",
+                "预习下一章节"
+            ],
+            "历史": [
+                "复习近代史",
+                "完成时间线作业"
+            ],
+            "政治": [
+                "完成思考题"
+            ],
+            "物理": [
+                "完成计算题",
+                "预习牛顿运动定律"
+            ],
+            "化学": [
+                "背诵元素周期表",
+                "完成实验预习"
+            ]
+        };
+
+        // 根据数据生成作业列表
+        function renderHomework() {
+            // 遍历所有科目
+            Object.keys(homeworkData).forEach(subject => {
+                // 获取该科目的任务容器
+                const subjectEl = document.querySelector(`.subject:has(.subject-title:contains("${subject}")) .assignment`);
+                if (!subjectEl) return;
+                
+                // 清空现有内容
+                subjectEl.innerHTML = '';
+                
+                // 添加该科目的所有任务
+                homeworkData[subject].forEach(task => {
+                    const taskEl = document.createElement('label');
+                    taskEl.className = 'task-item';
+                    taskEl.innerHTML = `
+                        <input type="checkbox" class="task-checkbox">
+                        <span class="task-text">${task}</span>
+                    `;
+                    subjectEl.appendChild(taskEl);
+                });
+            });
+        }
+
+        // 为了支持:contains选择器
+        jQuery.expr[':'].contains = function(a, i, m) {
+            return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        };
+
+        // 页面加载时渲染作业
+        document.addEventListener('DOMContentLoaded', function() {
+            // 引入jQuery (为了支持:contains选择器)
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+            script.onload = function() {
+                renderHomework();
+            };
+            document.head.appendChild(script);
+        });
+
+        // 设置实时更新的日期和时间函数
+        function updateDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('current-date').textContent = 
+                `${year}年${month}月${day}日 ${hours}时${minutes}分${seconds}秒`;
+        }
+        
+        // 页面加载时立即更新时间
+        updateDateTime();
+        
+        // 每秒更新一次时间
+        setInterval(updateDateTime, 1000);
     </script>
 </body>
 </html>
