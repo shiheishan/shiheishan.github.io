@@ -13,6 +13,11 @@ body {
   animation: flow 20s ease infinite;
   color: #eee;
 }
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 .container {
   width: 90%;
   max-width: 420px;
@@ -96,31 +101,20 @@ header {
   margin-top: 20px;
   text-align: center;
 }
-@keyframes flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
 </style>
 </head>
 <body>
 <div class="container">
-<header id="date"></header>
-<div id="preview"></div>
-<div id="progress">
-  <svg width="120" height="120">
-    <circle cx="60" cy="60" r="50" stroke="#555" stroke-width="10" fill="none" />
-    <circle id="progress-ring" cx="60" cy="60" r="50" stroke="#4caf50" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" />
-    <text id="progress-text" x="60" y="60" text-anchor="middle" dominant-baseline="central" fill="#eee" font-size="20">0%</text>
-  </svg>
-</div>
-<div id="done-message" style="display:none;text-align:center;margin-top:20px;font-size:24px;">今日任务已完成，请好好休息。</div>
+  <header id="date"></header>
+  <div id="preview"></div>
+  <div id="progress">
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" stroke="#555" stroke-width="10" fill="none" />
+      <circle id="progress-ring" cx="60" cy="60" r="50" stroke="#4caf50" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" />
+      <text id="progress-text" x="60" y="60" text-anchor="middle" dominant-baseline="central" fill="#eee" font-size="20">0%</text>
+    </svg>
+  </div>
+  <div id="done-message" style="display:none;text-align:center;margin-top:20px;font-size:24px;">今日任务已完成，请好好休息。</div>
 </div>
 <script>
 const subjects = {
