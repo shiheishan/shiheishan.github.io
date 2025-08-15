@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作业预览</title>
+<style>
+:root {
+  --accent-color: #007aff;
+  --bg: #f5f5f7;
+  --card-bg: #ffffff;
+  --text: #1d1d1f;
+  --muted-text: #6e6e73;
+  --border: #d2d2d7;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.container {
+  width: 90%;
+  max-width: 420px;
+  margin: 20px auto;
+}
+header {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+}
+#preview {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  margin-top: 20px;
+  padding: 20px;
+  height: 400px;
+  overflow: auto;
+  color: var(--text);
+}
+.subject {
+  margin-bottom: 20px;
+}
+.subject h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+.task {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+.task input {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+}
+.task span {
+  position: relative;
+  display: inline-block;
+}
+.task span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  background: var(--accent-color);
+  width: 0;
+  transform: translateY(-50%);
+  transition: width 0.5s ease;
+}
+.task input:checked + span::after {
+  width: 100%;
+}
+.task input:checked + span {
+  color: var(--muted-text);
+}
+.subject.completed {
+  opacity: 0.6;
+}
+.subject.moving {
+  animation: slideOut 0.6s forwards;
+}
+@keyframes slideOut {
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+.subject.fade-in {
+  animation: fadeIn 0.6s forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.6; }
+}
+#progress {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--muted-text);
+}
+#progress-ring {
+  stroke: var(--accent-color);
+  transition: stroke-dashoffset 0.5s ease;
+}
+#progress-text {
+  fill: var(--accent-color);
+  transition: 0.5s;
+}
+#final-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  z-index: 999;
+  display: none;
+}
+#particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.char {
+  display: inline-block;
+}
+.container.disintegrate .char {
+  animation: disperse 1s forwards;
+}
+@keyframes disperse {
+  to {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(30deg);
+  }
+}
+#final-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  font-size: 32px;
+  color: var(--text);
+  opacity: 0;
+  transition: opacity 1s, transform 1s;
+}
+#final-text.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header id="date"></header>
+  <div id="preview"></div>
+  <div id="progress">
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" stroke="#d2d2d7" stroke-width="10" fill="none" />
+      <circle id="progress-ring" cx="60" cy="60" r="50" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" />
+      <text id="progress-text" x="60" y="60" text-anchor="middle" dominant-baseline="central" font-size="20">0%</text>
+    </svg>
+  </div>
+</div>
+<div id="final-overlay" style="display:none"></div>
+<script>
+const subjects = {
+  '语文': ['背诵《春晓》', '完成练习册第10页'],
+  '数学': ['做作业本P20-22', '复习二次函数'],
+  '英语': ['背单词Unit5', '完成语法练习'],
+  '物理': ['预习第3章', '完成实验报告'],
+  '化学': ['练习化学方程式', '完成习题2-4'],
+  '生物': ['复习细胞结构', '完成小测卷'],
+  '历史': ['阅读《中国近代史》第2章', '整理课堂笔记'],
+  '政治': ['思考题第1-3题'],
+  '地理': ['完成地图册练习']
+};
+const preview = document.getElementById('preview');
+let totalTasks = 0;
+for (const [subject, works] of Object.entries(subjects)) {
+  const section = document.createElement('section');
+  section.className = 'subject';
+  const h2 = document.createElement('h2');
+  h2.textContent = subject;
+  section.appendChild(h2);
+  works.forEach(work => {
+    totalTasks++;
+    const label = document.createElement('label');
+    label.className = 'task';
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    const span = document.createElement('span');
+    span.textContent = work;
+    label.appendChild(input);
+    label.appendChild(span);
+    section.appendChild(label);
+    input.addEventListener('change', () => {
+      updateProgress();
+      checkSubject(section);
+    });
+  });
+  preview.appendChild(section);
+}
+wrapChars(document.querySelector('.container'));
+let completedTasks = 0;
+function updateProgress() {
+  completedTasks = document.querySelectorAll('#preview input:checked').length;
+  const percent = Math.round((completedTasks / totalTasks) * 100);
+  const ring = document.getElementById('progress-ring');
+  const offset = 314 * (1 - completedTasks / totalTasks);
+  ring.style.strokeDashoffset = offset;
+  document.getElementById('progress-text').textContent = percent + '%';
+}
+function checkSubject(section) {
+  const positions = getPositions();
+  const checks = section.querySelectorAll('input').length;
+  const checked = section.querySelectorAll('input:checked').length;
+  if (checks === checked && !section.classList.contains('completed')) {
+    section.classList.add('moving');
+    setTimeout(() => {
+      section.classList.remove('moving');
+      section.classList.add('completed', 'fade-in');
+      preview.appendChild(section);
+      setTimeout(() => section.classList.remove('fade-in'), 600);
+      animateReorder(positions, section);
+      checkAll();
+    }, 600);
+  } else if (checked < checks && section.classList.contains('completed')) {
+    preview.insertBefore(section, preview.querySelector('.subject:not(.completed)'));
+    section.classList.remove('completed');
+    animateReorder(positions, section);
+  }
+}
+function checkAll() {
+  const total = document.querySelectorAll('.subject').length;
+  const done = document.querySelectorAll('.subject.completed').length;
+  if (total === done) {
+    showFinal();
+  }
+}
+function showFinal() {
+  const container = document.querySelector('.container');
+  const chars = container.querySelectorAll('.char');
+  chars.forEach(span => {
+    span.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
+    span.style.setProperty('--dy', (Math.random() - 0.5) * 200 + 'px');
+  });
+  container.classList.add('disintegrate');
+  setTimeout(() => {
+    container.style.display = 'none';
+    const overlay = document.getElementById('final-overlay');
+    overlay.style.display = 'block';
+    const canvas = document.createElement('canvas');
+    canvas.id = 'particle-canvas';
+    overlay.appendChild(canvas);
+    startParticles(canvas);
+    setTimeout(() => {
+      canvas.remove();
+      const text = document.createElement('div');
+      text.id = 'final-text';
+      text.textContent = '今日任务完成，请好好休息';
+      overlay.appendChild(text);
+      requestAnimationFrame(() => text.classList.add('show'));
+    }, 1500);
+  }, 1000);
+}
+function startParticles(canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+  const particles = Array.from({ length: 100 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 4,
+    vy: (Math.random() - 0.5) * 4,
+    alpha: 1
+  }));
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.02;
+      ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+      ctx.fillRect(p.x, p.y, 3, 3);
+    });
+    if (particles.some(p => p.alpha > 0)) {
+      requestAnimationFrame(animate);
+    }
+  }
+  animate();
+}
+function updateTime() {
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  });
+  const str = fmt.format(now);
+  const header = document.getElementById('date');
+  header.innerHTML = '';
+  for (const ch of str) {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch;
+    header.appendChild(span);
+  }
+}
+setInterval(updateTime, 1000);
+updateTime();
+updateProgress();
+
+function wrapChars(el) {
+  el.childNodes.forEach(node => {
+    if (node.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      node.textContent.split('').forEach(ch => {
+        const span = document.createElement('span');
+        span.textContent = ch;
+        span.className = 'char';
+        frag.appendChild(span);
+      });
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === 1) {
+      if (node.namespaceURI !== 'http://www.w3.org/2000/svg') {
+        wrapChars(node);
+      }
+    }
+  });
+}
+
+function getPositions() {
+  return Array.from(preview.children).map(el => [el, el.getBoundingClientRect().top]);
+}
+
+function animateReorder(prev, skip) {
+  Array.from(preview.children).forEach(el => {
+    if (el === skip) return;
+    const old = prev.find(p => p[0] === el);
+    if (!old) return;
+    const dy = old[1] - el.getBoundingClientRect().top;
+    if (dy) {
+      el.style.transition = 'transform 0.6s';
+      el.style.transform = `translateY(${dy}px)`;
+      requestAnimationFrame(() => {
+        el.style.transform = '';
+      });
+      el.addEventListener('transitionend', () => {
+        el.style.transition = '';
+      }, { once: true });
+    }
+  });
+}
+</script>
+</body>
+</html>
