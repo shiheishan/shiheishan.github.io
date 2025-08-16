@@ -27,15 +27,14 @@ header {
 }
 
 #preview {
-  margin-top: 20px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 15px;
-  background: #ffffff;
-codex/add-border-to-work-area-e5rtin
-  max-height: 300px;
-  overflow-y: auto;
-}
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 15px;
+    background: #ffffff;
+    max-height: 300px;
+    overflow-y: auto;
+  }
 
 .subject {
   margin-bottom: 20px;
