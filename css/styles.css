@@ -28,6 +28,10 @@ header {
 
 #preview {
   margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px;
+  background: #ffffff;
 }
 
 .subject {
@@ -37,6 +41,13 @@ header {
 .subject h2 {
   margin: 0 0 10px;
   font-size: 20px;
+  cursor: pointer;
+}
+
+.tasks {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
 .task {
@@ -86,4 +97,40 @@ header {
 
 .task .text {
   flex: 1;
+}
+
+.task input:checked ~ .text {
+  text-decoration: line-through;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#progress {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#progress svg {
+  width: 100px;
+  height: 100px;
+}
+
+#progress .bg {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3.8;
+}
+
+#progress .meter {
+  fill: none;
+  stroke: var(--checked-color);
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+#progress .percentage {
+  font-size: 0.5em;
+  text-anchor: middle;
+  fill: var(--text);
 }
