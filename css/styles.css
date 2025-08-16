@@ -32,6 +32,7 @@ header {
   border-radius: 16px;
   padding: 15px;
   background: #ffffff;
+codex/add-border-to-work-area-e5rtin
   max-height: 300px;
   overflow-y: auto;
 }
@@ -43,6 +44,13 @@ header {
 .subject h2 {
   margin: 0 0 10px;
   font-size: 20px;
+  cursor: pointer;
+}
+
+.tasks {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
 
