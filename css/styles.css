@@ -8,17 +8,20 @@
   --checked-color: #28a745;
   --strike-color: rgba(0, 0, 0, 0.5);
 }
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   background: var(--bg);
   color: var(--text);
 }
+
 .container {
   width: 90%;
   max-width: 420px;
   margin: 20px auto;
 }
+
 header {
   background: var(--card-bg);
   border-radius: 16px;
@@ -30,38 +33,64 @@ header {
   font-weight: 600;
   color: var(--text);
 }
-#preview {
+
+/* === 新增：外层卡片，负责圆角/边框/阴影 + 硬裁剪（防穿模） === */
+.preview-card {
   background: var(--card-bg);
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   margin-top: 20px;
-  padding: 20px;
-  height: 400px;
-codex/add-scrollbar-styling-to-preview-33zt9n
-  overflow-y: scroll;
-  padding-right: 10px;
-  overflow: auto;
-  scrollbar-gutter: stable;
-  color: var(--text);
+
+  /* 关键：裁剪所有绘制（现代浏览器 clip，旧浏览器 hidden 兜底） */
+  overflow: clip;
+  overflow: hidden;
+  background-clip: padding-box;
 }
+
+/* === 调整：内层只负责滚动与内边距，不再承担圆角/边框/阴影 === */
+#preview {
+  padding: 20px 14px 20px 20px;   /* 右侧多 2px，避免文本顶到滚动条 */
+  height: 400px;
+
+  /* 去掉重复/冲突的 overflow，保留一个即可 */
+  overflow: auto;
+
+  /* 仅预留滚动条空间，不负责裁剪 */
+  scrollbar-gutter: stable both-edges;
+
+  color: var(--text);
+
+  /* 从这里移走外观属性到 .preview-card */
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* 可选：WebKit 滚动条更内敛（不喜欢可删） */
+#preview::-webkit-scrollbar { width: 12px; }
+#preview::-webkit-scrollbar-track { background: transparent; }
+#preview::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(0,0,0,.25);
+  border: 3px solid transparent;   /* 让拇指缩在轨道里 */
+  background-clip: content-box;
+}
+
 .subject {
   margin-bottom: 20px;
   transition: transform 0.6s;
 }
-.subject h2 {
-  margin: 0 0 10px;
-  font-size: 20px;
-}
+.subject h2 { margin: 0 0 10px; font-size: 20px; }
+
 .task {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
   width: 100%;
 }
-.task input {
-  display: none;
-}
+.task input { display: none; }
 .task .checkbox {
   -webkit-appearance: none;
   appearance: none;
@@ -78,119 +107,54 @@ codex/add-scrollbar-styling-to-preview-33zt9n
 .task .checkbox::after {
   content: "";
   position: absolute;
-  left: 5px;
-  top: 1px;
-  width: 4px;
-  height: 8px;
+  left: 5px; top: 1px;
+  width: 4px; height: 8px;
   border: solid var(--checked-color);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg) scale(0);
   transform-origin: bottom left;
   transition: transform 0.3s ease;
 }
-.task input:checked + .checkbox {
-  border-color: var(--checked-color);
-}
-.task input:checked + .checkbox::after {
-  transform: rotate(45deg) scale(1);
-}
-.task .text {
-  position: relative;
-  display: inline-block;
-  transition: color 0.5s ease;
-}
+.task input:checked + .checkbox { border-color: var(--checked-color); }
+.task input:checked + .checkbox::after { transform: rotate(45deg) scale(1); }
+
+.task .text { position: relative; display: inline-block; transition: color 0.5s ease; }
 .task .text::after {
   content: "";
   position: absolute;
-  left: 0;
-  top: 50%;
-  height: 2px;
-  background: var(--strike-color);
-  width: 0;
-  transform: translateY(-50%);
+  left: 0; top: 50%;
+  height: 2px; background: var(--strike-color);
+  width: 0; transform: translateY(-50%);
   transition: width 0.5s ease;
 }
-.task input:checked ~ .text::after {
-  width: 100%;
-  background: var(--strike-color);
-}
-.task input:checked ~ .text {
-  color: var(--strike-color);
-  transition: color 0.5s ease;
-}
-.subject.completed {
-  opacity: 0.6;
-}
-.subject.moving {
-  animation: slideOut 0.6s forwards;
-}
-@keyframes slideOut {
-  to {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-}
-.subject.fade-in {
-  animation: fadeIn 0.6s forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 0.6; }
-}
-#progress {
-  margin-top: 20px;
-  text-align: center;
-  color: var(--muted-text);
-}
-#progress-ring {
-  stroke: var(--accent-color);
-  transition: stroke-dashoffset 0.5s ease;
-}
-#progress-text {
-  fill: var(--accent-color);
-  transition: 0.5s;
-}
+.task input:checked ~ .text::after { width: 100%; background: var(--strike-color); }
+.task input:checked ~ .text { color: var(--strike-color); transition: color 0.5s ease; }
+
+.subject.completed { opacity: 0.6; }
+.subject.moving { animation: slideOut 0.6s forwards; }
+@keyframes slideOut { to { transform: translateY(20px); opacity: 0; } }
+.subject.fade-in { animation: fadeIn 0.6s forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 0.6; } }
+
+#progress { margin-top: 20px; text-align: center; color: var(--muted-text); }
+#progress-ring { stroke: var(--accent-color); transition: stroke-dashoffset 0.5s ease; }
+#progress-text { fill: var(--accent-color); transition: 0.5s; }
+
 #final-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(255, 255, 255, 0.9);
   color: var(--text);
   z-index: 999;
   display: none;
 }
-#particle-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.char {
-  display: inline-block;
-}
-.container.disintegrate .char {
-  animation: disperse 1s forwards;
-}
-@keyframes disperse {
-  to {
-    opacity: 0;
-    transform: translate(var(--dx), var(--dy)) rotate(30deg);
-  }
-}
+#particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.char { display: inline-block; }
+.container.disintegrate .char { animation: disperse 1s forwards; }
+@keyframes disperse { to { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(30deg); } }
 #final-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.8);
-  font-size: 32px;
-  color: var(--text);
-  opacity: 0;
+  font-size: 32px; color: var(--text); opacity: 0;
   transition: opacity 1s, transform 1s;
 }
-#final-text.show {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
+#final-text.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
