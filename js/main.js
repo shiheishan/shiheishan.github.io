@@ -37,23 +37,24 @@ function updateProgress() {
   document.getElementById('progress-text').textContent = percent + '%';
 }
 function checkSubject(section) {
-  const positions = getPositions();
   const checks = section.querySelectorAll('input').length;
   const checked = section.querySelectorAll('input:checked').length;
   if (checks === checked && !section.classList.contains('completed')) {
+    const prevPositions = getPositions();
     section.classList.add('moving');
     setTimeout(() => {
       section.classList.remove('moving');
       section.classList.add('completed', 'fade-in');
       preview.appendChild(section);
       setTimeout(() => section.classList.remove('fade-in'), 600);
-      animateReorder(positions, section);
+      animateReorder(prevPositions, section);
       checkAll();
     }, 600);
   } else if (checked < checks && section.classList.contains('completed')) {
+    const prevPositions = getPositions();
     preview.insertBefore(section, preview.querySelector('.subject:not(.completed)'));
     section.classList.remove('completed');
-    animateReorder(positions, section);
+    animateReorder(prevPositions, section);
   }
 }
 function checkAll() {
@@ -164,14 +165,12 @@ function animateReorder(prev, skip) {
     if (!old) return;
     const dy = old[1] - el.getBoundingClientRect().top;
     if (dy) {
-      el.style.transition = 'transform 0.6s';
+      el.style.transition = 'none';
       el.style.transform = `translateY(${dy}px)`;
       requestAnimationFrame(() => {
+        el.style.transition = '';
         el.style.transform = '';
       });
-      el.addEventListener('transitionend', () => {
-        el.style.transition = '';
-      }, { once: true });
     }
   });
 }
