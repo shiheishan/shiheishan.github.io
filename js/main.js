@@ -53,6 +53,8 @@ for (const [subject, works] of Object.entries(subjects)) {
     section.classList.toggle('open');
   });
   preview.appendChild(section);
+  tasksDiv.style.maxHeight = tasksDiv.scrollHeight + 'px';
+  section.classList.add('open');
 }
 
 const checkboxes = preview.querySelectorAll('input[type="checkbox"]');
