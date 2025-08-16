@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+codex/add-glassmorphism-theme-and-styles
 <div class="container">
   <header id="date" class="glass-card"></header>
   <div class="preview-card glass-card">
@@ -18,6 +19,20 @@
       <circle id="progress-ring" cx="60" cy="60" r="50" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" />
       <text id="progress-text" x="60" y="60" text-anchor="middle" dominant-baseline="central" font-size="20">0%</text>
     </svg>
+<div class="aurora-bg"></div>
+<div class="relative z-10">
+  <div class="container">
+    <header id="date"></header>
+    <div class="preview-card">
+      <div id="preview"></div>
+    </div>
+    <div id="progress">
+      <svg width="120" height="120">
+        <circle cx="60" cy="60" r="50" stroke="#d2d2d7" stroke-width="10" fill="none" />
+        <circle id="progress-ring" cx="60" cy="60" r="50" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" />
+        <text id="progress-text" x="60" y="60" text-anchor="middle" dominant-baseline="central" font-size="20">0%</text>
+      </svg>
+    </div>
   </div>
 </div>
 <div id="final-overlay" style="display:none"></div>
