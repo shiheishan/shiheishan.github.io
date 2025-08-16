@@ -7,6 +7,11 @@
   --border: #d2d2d7;
   --checked-color: #28a745;
   --strike-color: rgba(0, 0, 0, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
+  --blur: 10px;
+  --radius: 16px;
 }
 body {
   margin: 0;
@@ -38,6 +43,14 @@ header {
   margin-top: 20px;
   overflow: hidden;
   background-clip: padding-box;
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), var(--glass-bg);
+  backdrop-filter: blur(var(--blur)) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--glass-highlight);
+  border-radius: var(--radius);
 }
 
 #preview {
