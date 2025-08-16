@@ -14,10 +14,14 @@ for (const [subject, works] of Object.entries(subjects)) {
     label.className = 'task';
     const input = document.createElement('input');
     input.type = 'checkbox';
-    const span = document.createElement('span');
-    span.textContent = work;
+    const box = document.createElement('span');
+    box.className = 'checkbox';
+    const text = document.createElement('span');
+    text.className = 'text';
+    text.textContent = work;
     label.appendChild(input);
-    label.appendChild(span);
+    label.appendChild(box);
+    label.appendChild(text);
     section.appendChild(label);
     input.addEventListener('change', () => {
       updateProgress();
