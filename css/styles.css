@@ -30,20 +30,24 @@ header {
   font-weight: 600;
   color: var(--text);
 }
-#preview {
+.preview-card {
   background: var(--card-bg);
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   margin-top: 20px;
+  overflow: hidden;
+  background-clip: padding-box;
+}
+
+#preview {
   padding: 20px;
+  padding-right: 28px;
   height: 400px;
-codex/add-scrollbar-styling-to-preview-33zt9n
-  overflow-y: scroll;
-  padding-right: 10px;
   overflow: auto;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
   color: var(--text);
+  -webkit-overflow-scrolling: touch;
 }
 .subject {
   margin-bottom: 20px;
