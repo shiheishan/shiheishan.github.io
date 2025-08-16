@@ -66,6 +66,7 @@ function checkAll() {
 }
 function showFinal() {
   const container = document.querySelector('.container');
+  wrapChars(container);
   const chars = container.querySelectorAll('.char');
   chars.forEach(span => {
     span.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
@@ -86,6 +87,7 @@ function showFinal() {
       text.id = 'final-text';
       text.textContent = '今日任务完成，请好好休息';
       overlay.appendChild(text);
+      wrapChars(text);
       requestAnimationFrame(() => text.classList.add('show'));
     }, 1500);
   }, 1000);
