@@ -38,6 +38,9 @@ header {
   margin-top: 20px;
   padding: 20px;
   height: 400px;
+codex/add-scrollbar-styling-to-preview-33zt9n
+  overflow-y: scroll;
+  padding-right: 10px;
   overflow: auto;
   scrollbar-gutter: stable;
   color: var(--text);
