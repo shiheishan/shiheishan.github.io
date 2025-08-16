@@ -56,17 +56,49 @@ header {
   width: 100%;
 }
 .task input {
+ codex/update-checkbox-color-and-animation-w2qjpd
   display: none;
 }
 .task .checkbox {
+
+  -webkit-appearance: none;
+  appearance: none;
   width: 18px;
   height: 18px;
   margin-right: 10px;
   border: 2px solid var(--border);
   border-radius: 4px;
   position: relative;
+ codex/update-checkbox-color-and-animation-w2qjpd
   flex-shrink: 0;
   transition: border-color 0.3s ease;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+.task input::after {
+  content: "";
+  position: absolute;
+ codex/update-checkbox-color-and-animation-fjw9nk
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--checked-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transform-origin: bottom left;
+  transition: transform 0.3s ease;
+}
+
+.task input:checked {
+  border-color: var(--checked-color);
+}
+.task input:checked::after {
+  transform: rotate(45deg) scale(1);
 }
 .task .checkbox::after {
   content: "";
@@ -107,7 +139,9 @@ header {
   width: 100%;
   background: var(--strike-color);
 }
+ codex/update-checkbox-color-and-animation-w2qjpd
 .task input:checked ~ .text {
+.task input:checked + span {
   color: var(--strike-color);
   transition: color 0.5s ease;
 }
