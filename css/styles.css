@@ -100,10 +100,27 @@ header {
 
 .task .text {
   flex: 1;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.task .text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.5);
+  transform: translateY(-50%);
+  transition: width 0.3s ease;
+}
+
+.task input:checked ~ .text::after {
+  width: 100%;
 }
 
 .task input:checked ~ .text {
-  text-decoration: line-through;
   color: rgba(0, 0, 0, 0.5);
 }
 
