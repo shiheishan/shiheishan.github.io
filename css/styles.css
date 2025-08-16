@@ -7,6 +7,16 @@
   --border: #d2d2d7;
   --checked-color: #28a745;
   --strike-color: rgba(0, 0, 0, 0.5);
+codex/add-glassmorphism-theme-and-styles
+  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
+  --blur: 10px;
+  --radius: 16px;
+  --c1: #4f46e5;
+  --c2: #0ea5e9;
+  --c3: #10b981;
+  --c4: #f472b6;
 }
 body {
   margin: 0;
@@ -41,10 +51,16 @@ header {
 }
 
 .glass-card {
+codex/add-fallback-styles-for-.glass-card
   background-color: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), var(--glass-bg);
+  backdrop-filter: blur(var(--blur)) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--glass-highlight);
+  border-radius: var(--radius);
 }
 
 #preview {
@@ -204,4 +220,62 @@ header {
 #final-text.show {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
+}
+
+.relative {
+  position: relative;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.aurora-bg::before,
+.aurora-bg::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  animation: auroraShift 25s ease-in-out infinite;
+  filter: blur(80px) saturate(150%);
+  opacity: 0.7;
+}
+
+.aurora-bg::before {
+  background: radial-gradient(circle at 20% 20%, var(--c1), transparent 60%),
+              radial-gradient(circle at 80% 30%, var(--c2), transparent 60%);
+}
+
+.aurora-bg::after {
+  background: radial-gradient(circle at 30% 70%, var(--c3), transparent 60%),
+              radial-gradient(circle at 70% 80%, var(--c4), transparent 60%);
+  animation-direction: reverse;
+}
+
+@keyframes auroraShift {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: blur(60px) saturate(120%);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    filter: blur(80px) saturate(200%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: blur(60px) saturate(120%);
+    opacity: 0.6;
+  }
 }
