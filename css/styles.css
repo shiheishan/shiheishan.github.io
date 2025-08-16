@@ -6,6 +6,7 @@
   --muted-text: #6e6e73;
   --border: #d2d2d7;
   --checked-color: #28a745;
+  --strike-color: rgba(0, 0, 0, 0.5);
 }
 body {
   margin: 0;
@@ -55,34 +56,60 @@ header {
   width: 100%;
 }
 .task input {
+  display: none;
+}
+.task .checkbox {
   width: 18px;
   height: 18px;
   margin-right: 10px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 0.3s ease;
 }
-.task span {
+.task .checkbox::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--checked-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transform-origin: bottom left;
+  transition: transform 0.3s ease;
+}
+.task input:checked + .checkbox {
+  border-color: var(--checked-color);
+}
+.task input:checked + .checkbox::after {
+  transform: rotate(45deg) scale(1);
+}
+.task .text {
   position: relative;
   display: inline-block;
-  transition: color 0.5s ease, filter 0.5s ease;
+  transition: color 0.5s ease;
 }
-.task span::after {
+.task .text::after {
   content: "";
   position: absolute;
   left: 0;
   top: 50%;
   height: 2px;
-  background: var(--accent-color);
+  background: var(--strike-color);
   width: 0;
   transform: translateY(-50%);
   transition: width 0.5s ease;
 }
-.task input:checked + span::after {
+.task input:checked ~ .text::after {
   width: 100%;
-  background: var(--checked-color);
+  background: var(--strike-color);
 }
-.task input:checked + span {
-  color: var(--checked-color);
-  filter: brightness(80%);
-  transition: color 0.5s ease, filter 0.5s ease;
+.task input:checked ~ .text {
+  color: var(--strike-color);
+  transition: color 0.5s ease;
 }
 .subject.completed {
   opacity: 0.6;
