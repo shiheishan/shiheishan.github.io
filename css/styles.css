@@ -39,6 +39,7 @@ header {
   padding: 20px;
   height: 400px;
   overflow: auto;
+  scrollbar-gutter: stable;
   color: var(--text);
 }
 .subject {
