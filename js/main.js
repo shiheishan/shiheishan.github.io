@@ -1,5 +1,6 @@
 import subjects from '../data/subjects.js';
 const preview = document.getElementById('preview');
+const loadTime = new Date();
 let totalTasks = 0;
 for (const [subject, works] of Object.entries(subjects)) {
   const section = document.createElement('section');
@@ -114,14 +115,13 @@ function startParticles(canvas) {
   }
   animate();
 }
-function updateTime() {
-  const now = new Date();
+function displayLoadTime() {
   const fmt = new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric', month: 'long', day: 'numeric',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
     hour12: false
   });
-  const str = fmt.format(now);
+  const str = fmt.format(loadTime);
   const header = document.getElementById('date');
   header.innerHTML = '';
   for (const ch of str) {
@@ -131,8 +131,7 @@ function updateTime() {
     header.appendChild(span);
   }
 }
-setInterval(updateTime, 1000);
-updateTime();
+displayLoadTime();
 updateProgress();
 
 function wrapChars(el) {
