@@ -42,6 +42,7 @@ for (const [subject, works] of Object.entries(subjects)) {
     label.appendChild(text);
     tasksDiv.appendChild(label);
     totalTasks++;
+codex/add-border-to-work-area-e5rtin
   });
   section.appendChild(tasksDiv);
   h2.addEventListener('click', () => {
@@ -52,6 +53,7 @@ for (const [subject, works] of Object.entries(subjects)) {
     }
     section.classList.toggle('open');
   });
+  section.appendChild(tasksDiv);
   preview.appendChild(section);
 }
 
