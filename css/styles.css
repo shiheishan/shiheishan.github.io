@@ -38,7 +38,8 @@ header {
   margin-top: 20px;
   padding: 20px;
   height: 400px;
-  overflow: auto;
+  overflow-y: scroll;
+  padding-right: 10px;
   color: var(--text);
 }
 .subject {
