@@ -1,0 +1,156 @@
+:root {
+  --accent-color: #007aff;
+  --bg: #f5f5f7;
+  --card-bg: #ffffff;
+  --text: #1d1d1f;
+  --muted-text: #6e6e73;
+  --border: #d2d2d7;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.container {
+  width: 90%;
+  max-width: 420px;
+  margin: 20px auto;
+}
+header {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+}
+#preview {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  margin-top: 20px;
+  padding: 20px;
+  height: 400px;
+  overflow: auto;
+  color: var(--text);
+}
+.subject {
+  margin-bottom: 20px;
+}
+.subject h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+.task {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+.task input {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+}
+.task span {
+  position: relative;
+  display: inline-block;
+}
+.task span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  background: var(--accent-color);
+  width: 0;
+  transform: translateY(-50%);
+  transition: width 0.5s ease;
+}
+.task input:checked + span::after {
+  width: 100%;
+}
+.task input:checked + span {
+  color: var(--muted-text);
+}
+.subject.completed {
+  opacity: 0.6;
+}
+.subject.moving {
+  animation: slideOut 0.6s forwards;
+}
+@keyframes slideOut {
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+.subject.fade-in {
+  animation: fadeIn 0.6s forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.6; }
+}
+#progress {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--muted-text);
+}
+#progress-ring {
+  stroke: var(--accent-color);
+  transition: stroke-dashoffset 0.5s ease;
+}
+#progress-text {
+  fill: var(--accent-color);
+  transition: 0.5s;
+}
+#final-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  z-index: 999;
+  display: none;
+}
+#particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.char {
+  display: inline-block;
+}
+.container.disintegrate .char {
+  animation: disperse 1s forwards;
+}
+@keyframes disperse {
+  to {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(30deg);
+  }
+}
+#final-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  font-size: 32px;
+  color: var(--text);
+  opacity: 0;
+  transition: opacity 1s, transform 1s;
+}
+#final-text.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
