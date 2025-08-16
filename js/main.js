@@ -28,13 +28,26 @@ for (const [subject, works] of Object.entries(subjects)) {
 }
 wrapChars(document.querySelector('.container'));
 let completedTasks = 0;
+let lastPercent = 0;
+let progressRaf;
 function updateProgress() {
   completedTasks = document.querySelectorAll('#preview input:checked').length;
-  const percent = Math.round((completedTasks / totalTasks) * 100);
+  const target = Math.round((completedTasks / totalTasks) * 100);
   const ring = document.getElementById('progress-ring');
-  const offset = 314 * (1 - completedTasks / totalTasks);
-  ring.style.strokeDashoffset = offset;
-  document.getElementById('progress-text').textContent = percent + '%';
+  const text = document.getElementById('progress-text');
+  cancelAnimationFrame(progressRaf);
+  function step() {
+    if (lastPercent !== target) {
+      lastPercent += lastPercent < target ? 1 : -1;
+      ring.style.strokeDashoffset = 314 * (1 - lastPercent / 100);
+      text.textContent = lastPercent + '%';
+      progressRaf = requestAnimationFrame(step);
+    } else {
+      ring.style.strokeDashoffset = 314 * (1 - lastPercent / 100);
+      text.textContent = lastPercent + '%';
+    }
+  }
+  step();
 }
 function checkSubject(section) {
   const checks = section.querySelectorAll('input').length;
