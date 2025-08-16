@@ -40,11 +40,10 @@ for (const [subject, works] of Object.entries(subjects)) {
     label.appendChild(input);
     label.appendChild(box);
     label.appendChild(text);
-    tasksDiv.appendChild(label);
-    totalTasks++;
-codex/add-border-to-work-area-e5rtin
-  });
-  section.appendChild(tasksDiv);
+      tasksDiv.appendChild(label);
+      totalTasks++;
+    });
+    section.appendChild(tasksDiv);
   h2.addEventListener('click', () => {
     if (section.classList.contains('open')) {
       tasksDiv.style.maxHeight = '0';
@@ -53,7 +52,6 @@ codex/add-border-to-work-area-e5rtin
     }
     section.classList.toggle('open');
   });
-  section.appendChild(tasksDiv);
   preview.appendChild(section);
 }
 
