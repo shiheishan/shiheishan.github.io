@@ -8,3 +8,10 @@
 1. 新建仓库并上传：`index.html`, `styles.css`, `app.js`, `.nojekyll`, `README.md`
 2. Settings → Pages → Source 选 `Deploy from a branch`，Branch 选 `main /(root)`
 3. 等待生成链接即可
+
+## 本地检查
+运行 ESLint 与 Stylelint：
+
+```sh
+npm run lint
+```
