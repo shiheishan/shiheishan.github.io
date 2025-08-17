@@ -21,19 +21,23 @@ const ionCanvas = document.getElementById('ion-canvas');
 
 const RADIUS = 40;
 const CIRCUM = 2 * Math.PI * RADIUS;
+let seqCounter = 0;
+let resortTimer = null;
+let isAnimating = false;
+let pending = false;
 
 function render(){
   const frag = document.createDocumentFragment();
-  DATA.forEach((subj, si) => {
-    const card = document.createElement('div');
-    card.className = 'subject';
-    card.dataset.index = si;
-    card.innerHTML = `<div class="subject-title">${subj.name}</div>`;
-    const ul = document.createElement('ul');
-    ul.className = 'tasks';
-    subj.tasks.forEach((t, ti) => {
-      const li = document.createElement('li');
-      const id = `s${si}t${ti}`;
+    DATA.forEach((subj) => {
+      const card = document.createElement('div');
+      card.className = 'subject';
+      card.dataset.seq = String(seqCounter++);
+      card.innerHTML = `<div class="subject-title">${subj.name}</div>`;
+      const ul = document.createElement('ul');
+      ul.className = 'tasks';
+      subj.tasks.forEach((t, ti) => {
+        const li = document.createElement('li');
+        const id = `s${card.dataset.seq}t${ti}`;
       li.innerHTML = `
         <label class="task" for="${id}">
           <input id="${id}" type="checkbox" />
@@ -55,38 +59,88 @@ function allInputs(){ return [...subjectsEl.querySelectorAll('input[type="checkb
 function onToggle(e){
   const target = e.target;
   if(target && target.matches('input[type="checkbox"]')){
-    updateAll();
+    updateCompletion();
+    scheduleResort();
   }
 }
 
-function updateAll(){
+function updateCompletion(){
   const subjects = [...subjectsEl.children];
   subjects.forEach(sub => {
     const boxes = sub.querySelectorAll('input[type="checkbox"]');
     const allDone = boxes.length > 0 && [...boxes].every(b => b.checked);
     sub.dataset.complete = allDone;
   });
-  const prev = new Map(subjects.map(el => [el, el.getBoundingClientRect()]));
-  const incomplete = subjects.filter(el => el.dataset.complete !== 'true');
-  const complete = subjects.filter(el => el.dataset.complete === 'true');
-  [...incomplete, ...complete].forEach(el => subjectsEl.appendChild(el));
-  const after = new Map([...subjectsEl.children].map(el => [el, el.getBoundingClientRect()]));
-  after.forEach((rect, el) => {
-    const first = prev.get(el);
-    const dx = first.left - rect.left;
-    const dy = first.top - rect.top;
+  updateProgress();
+}
+
+function scheduleResort(){
+  pending = true;
+  clearTimeout(resortTimer);
+  resortTimer = setTimeout(() => {
+    if(isAnimating) return;
+    pending = false;
+    resortWithFLIP();
+  }, 120);
+}
+
+function resortWithFLIP(){
+  const list = subjectsEl;
+  const items = Array.from(list.children);
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const first = new Map(items.map(el => [el, el.getBoundingClientRect()]));
+
+  items.sort((a,b)=>{
+    const ca = a.dataset.complete === 'true' ? 1 : 0;
+    const cb = b.dataset.complete === 'true' ? 1 : 0;
+    if (ca !== cb) return ca - cb;
+    return Number(a.dataset.seq) - Number(b.dataset.seq);
+  });
+
+  items.forEach(el => list.appendChild(el));
+  list.classList.add('reordering');
+  if(reduce){
+    list.classList.remove('reordering');
+    return;
+  }
+  isAnimating = true;
+  const last = new Map(items.map(el => [el, el.getBoundingClientRect()]));
+  let active = 0;
+  items.forEach(el => {
+    const f = first.get(el), l = last.get(el);
+    const dx = f.left - l.left;
+    const dy = f.top - l.top;
     if(dx || dy){
-      el.style.transition = 'none';
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-      el.style.opacity = '0.6';
-      requestAnimationFrame(() => {
-        el.style.transition = '';
-        el.style.transform = '';
+      active++;
+      el.style.transform = `translate(${dx}px,${dy}px)`;
+      el.style.opacity = '0.96';
+      requestAnimationFrame(()=>{
+        el.style.transition = `transform var(--move-dur) var(--move-ease), opacity var(--move-dur) var(--move-ease)`;
+        el.style.transform = 'translate(0,0)';
         el.style.opacity = '';
       });
+      el.addEventListener('transitionend', () => {
+        el.style.transition = '';
+        el.style.transform = '';
+        if(--active === 0){
+          list.classList.remove('reordering');
+          isAnimating = false;
+          if(pending){
+            pending = false;
+            resortWithFLIP();
+          }
+        }
+      }, { once: true });
     }
   });
-  updateProgress();
+  if(active===0){
+    list.classList.remove('reordering');
+    isAnimating = false;
+    if(pending){
+      pending = false;
+      resortWithFLIP();
+    }
+  }
 }
 
 function updateProgress(){
@@ -168,4 +222,5 @@ function celebrateAndVanish(){
 
 // ====== 启动 ======
 render();
-updateAll();
+updateCompletion();
+resortWithFLIP();
