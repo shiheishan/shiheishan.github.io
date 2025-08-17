@@ -1,4 +1,5 @@
-.subject{
+.subject,
+#subjects > .card{
   background: #fff;
   border:1px solid var(--border); border-radius:18px;
   box-shadow: var(--shadow);
@@ -7,18 +8,20 @@
   will-change: transform;
 }
 .subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
-.tasks{ margin:0; padding:0; list-style:none; }
+:is(.tasks, .list){ margin:0; padding:0; list-style:none; }
 @property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
-.task{ display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:12px; position:relative; }
-.task:hover{ background:linear-gradient(180deg, rgba(0,0,0,.04), transparent); }
-.task input{ position:absolute; opacity:0; pointer-events:none; }
-.checkbox{
+:is(.task, .cell){ display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:12px; position:relative; }
+:is(.task, .cell):hover{ background:linear-gradient(180deg, rgba(0,0,0,.04), transparent); }
+:is(.task, .cell) input{ position:absolute; opacity:0; pointer-events:none; }
+.checkbox,
+.switch{
   width:22px; height:22px; border-radius:8px; border:1px solid var(--border);
   background:linear-gradient(180deg,#fff,#f3f4f6);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
   display:inline-grid; place-items:center; flex:0 0 22px; position:relative; overflow:hidden;
 }
-.checkbox::after{
+.checkbox::after,
+.switch::after{
   content:""; position:absolute; left:5px; top:11px; width:12px; height:6px;
   border-left:3px solid var(--accent); border-bottom:3px solid var(--accent);
   transform: rotate(-45deg) scale(0); transform-origin: left bottom;
@@ -39,6 +42,6 @@
   content:""; position:absolute; left:0; right:0; top:50%; height:2px; border-radius:2px; background:var(--strike);
   transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform .42s ease;
 }
-.task input:checked ~ .checkbox::after{ transform: rotate(-45deg) scale(1); }
-.task input:checked ~ .text{ --p: 1; }
-.task input:not(:checked) ~ .text{ --p: 0; }
+:is(.task, .cell) input:checked ~ :is(.checkbox, .switch)::after{ transform: rotate(-45deg) scale(1); }
+:is(.task, .cell) input:checked ~ .text{ --p: 1; }
+:is(.task, .cell) input:not(:checked) ~ .text{ --p: 0; }
