@@ -7,27 +7,19 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="wrap" id="app">
+  <div class="app" id="app">
     <canvas id="ion-canvas"></canvas>
 
-    <div class="date-card" aria-live="polite">
-      <span id="now">——</span>
+    <div class="time-card" aria-live="polite">
+      <span id="now">--:--:--</span>
     </div>
 
-    
-    <div class="board card">
-      <div id="subjects"></div>
+    <div class="panel">
+      <div class="panel__title">作业</div>
+      <div class="panel__body" id="subjects"></div>
     </div>
 
-    <div class="donut" aria-label="进度甜甜圈">
-      <svg viewBox="0 0 140 140" role="img" aria-labelledby="donut-title">
-        <title id="donut-title">完成进度</title>
-        <circle class="track" cx="70" cy="70" r="60" stroke-width="12"></circle>
-        <circle class="ring" id="ring" cx="70" cy="70" r="60" stroke-width="12"
-                stroke-dasharray="377" stroke-dashoffset="377"></circle>
-        <text id="pctText" class="pct" x="70" y="76">0%</text>
-      </svg>
-    </div>
+    <button class="fab" aria-label="新增">+</button>
 
     <div class="done-screen" id="done">
       <div class="card">
