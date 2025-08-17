@@ -5,7 +5,7 @@
 .donut circle{ fill:none; stroke-width:12; }
 .donut .track{ stroke:#e5e5ea; }
 .donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg);
-               transition:stroke-dashoffset var(--donut-dur) var(--donut-ease); }
+               transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard); }
 @media (prefers-reduced-motion: reduce){
   .donut .ring{ transition:none; }
 }

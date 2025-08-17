@@ -4,7 +4,7 @@
   border:1px solid var(--border); border-radius:18px;
   box-shadow: var(--shadow);
   padding:14px 16px; margin-bottom:14px;
-  transition: opacity var(--fade-dur) ease-out;
+  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
   will-change: transform;
 }
 .subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
@@ -25,7 +25,7 @@
   content:""; position:absolute; left:5px; top:11px; width:12px; height:6px;
   border-left:3px solid var(--accent); border-bottom:3px solid var(--accent);
   transform: rotate(-45deg) scale(0); transform-origin: left bottom;
-  transition: transform .28s cubic-bezier(.2,.9,.3,1.5);
+  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
 }
 .text{
   position:relative; font-size:16px; letter-spacing:.2px; line-height:1.4;
@@ -36,11 +36,10 @@
     rgba(0,0,0,1) calc(var(--p)*100%),
     rgba(0,0,0,1) 100%
   );
-  transition: --p .42s ease;
 }
 .text::after{
   content:""; position:absolute; left:0; right:0; top:50%; height:2px; border-radius:2px; background:var(--strike);
-  transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform .42s ease;
+  transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
 }
 :is(.task, .cell) input:checked ~ :is(.checkbox, .switch)::after{ transform: rotate(-45deg) scale(1); }
 :is(.task, .cell) input:checked ~ .text{ --p: 1; }
