@@ -88,7 +88,6 @@ function tick(){
 
 // ====== 离子消除动画（简版粒子溶解） ======
 function celebrateAndVanish(){
-  const doneScreen = document.getElementById('done');
   if(document.body.classList.contains('disintegrate')) return;
   document.body.classList.add('disintegrate');
 
