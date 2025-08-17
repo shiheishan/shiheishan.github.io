@@ -11,4 +11,14 @@
 .subject-title { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: #1d1d1f; }
 .task-list { margin: 0; padding-left: 1.2em; color: #1d1d1f; }
 .task-item { margin: 4px 0; list-style: disc; }
-.hw-error { color: #d00; padding: 12px 16px; background: #fff3f3; border-radius: 12px; margin: 12px; }
+/* Homework namespace (避免与旧站样式冲突) */
+#homework-root { padding: 0 8px 96px; } /* 预留底部空间给进度环 */
+.hw-card { background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:16px 12px; }
+.hw-title { margin:0 0 8px; font-size:20px; font-weight:700; color:#1d1d1f; }
+.hw-list { margin:0; padding-left: 1.2em; color:#1d1d1f; }
+.hw-item { margin:6px 0; list-style: disc; }
+.hw-error { color:#d00; padding:12px 16px; background:#fff3f3; border-radius:12px; margin:12px; }
+
+/* 如果旧样式仍在，避免误命中（保险条款） */
+#homework-root .task-item::before,
+#homework-root .task-item::after { content:none !important; display:none !important; }
