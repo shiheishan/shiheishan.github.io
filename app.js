@@ -16,7 +16,6 @@ const subjectsEl = document.getElementById('subjects');
 const ring = document.getElementById('ring');
 const pctText = document.getElementById('pctText');
 const app = document.getElementById('app');
-const paper = document.getElementById('paper');
 const ionCanvas = document.getElementById('ion-canvas');
 
 const CIRCUM = 2 * Math.PI * 60; // r = 60
@@ -93,7 +92,7 @@ function celebrateAndVanish(){
   if(document.body.classList.contains('disintegrate')) return;
   document.body.classList.add('disintegrate');
 
-  const rect = paper.getBoundingClientRect();
+  const rect = app.getBoundingClientRect();
   const cw = ionCanvas.width = rect.width * (window.devicePixelRatio || 1);
   const ch = ionCanvas.height = rect.height * (window.devicePixelRatio || 1);
   const ctx = ionCanvas.getContext('2d');
@@ -131,9 +130,7 @@ function celebrateAndVanish(){
     if(alive>0){
       requestAnimationFrame(step);
     }else{
-      paper.style.display = 'none';
-      const root = document.getElementById('app');
-      root.classList.add('show-done');
+        app.classList.add('show-done');
     }
   }
   requestAnimationFrame(step);

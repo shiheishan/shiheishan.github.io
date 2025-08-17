@@ -1,7 +1,6 @@
 /* ===== iOS 拟物，白色背景（无流动背景），删除线回调为半黑 ===== */
 :root{
   --bg:#f5f5f7;
-  --paper:#f9f9f7;
   --ink:#1d1d1f;
   --muted:#6e6e73;
   --accent:#34c759;
@@ -13,7 +12,7 @@
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#0f1115;
-    --paper:#16181d; --ink:#f2f2f7; --muted:#a1a1a6; --border:#2c2c2e;
+    --ink:#f2f2f7; --muted:#a1a1a6; --border:#2c2c2e;
     --card:#0f1115e6; --strike:rgba(255,255,255,.5);
   }
 }
@@ -28,15 +27,6 @@ body{
 }
 
 .wrap{ min-height:100%; display:grid; place-items:center; padding:32px; }
-
-/* 主纸面（外框仍去除，根据你之前要求） */
-.paper{
-  width:min(880px, 94vw); min-height:82vh;
-  background:var(--paper);
-  border-radius:28px; position:relative; padding:28px 28px 20px;
-  box-shadow:none;
-  overflow:hidden;
-}
 
 /* 时间卡片（可留玻璃风格，也可换为纯白卡片） */
 .date-card{
@@ -119,14 +109,6 @@ body{
 .done-screen .card{ background:#fff; border:1px solid var(--border); border-radius:22px; padding:28px 22px; box-shadow:0 12px 26px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.5); }
 .done-screen h1{ margin:0 0 6px; font-size:22px; }
 .done-screen p{ margin:0; color:var(--muted); }
-
-/* 离子消除 */
-.disintegrate .paper{ animation: paper-out .9s ease forwards; }
-@keyframes paper-out{
-  0%{filter:none; opacity:1; transform:translateY(0) scale(1);}
-  60%{filter:blur(2px); opacity:.6;}
-  100%{filter:blur(8px); opacity:0; transform:translateY(10px) scale(.98);}
-}
 
 /* 小提示 */
 .hint{ margin:10px 0 0; font-size:12px; color:var(--muted); }
