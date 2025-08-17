@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>作业预览 · 苹果拟物</title>
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/ios-theme.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/layout.css" />
   <link rel="stylesheet" href="/css/hw-panel.css" />
@@ -12,10 +14,10 @@
 <body>
   <div class="app" id="app">
     <canvas id="ion-canvas"></canvas>
-    <div class="time-card" aria-live="polite">
+    <div class="card time-card" aria-live="polite">
       <span id="now">--:--:--</span>
     </div>
-    <div class="panel">
+    <div class="card panel">
       <div class="panel__body" id="subjects"></div>
     </div>
     <figure class="donut" role="progressbar" aria-label="整体完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -25,7 +27,7 @@
       </svg>
       <figcaption id="pctText" aria-live="polite">0%</figcaption>
     </figure>
-    <div class="done-screen" id="done">
+    <div class="modal done-screen" id="done">
       <div class="card">
         <h1>今日任务已完成</h1>
         <p>请好好休息。</p>
