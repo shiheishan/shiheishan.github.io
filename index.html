@@ -15,11 +15,16 @@
     </div>
 
     <div class="panel">
-      <div class="panel__title">作业</div>
       <div class="panel__body" id="subjects"></div>
     </div>
 
-    <button class="fab" aria-label="新增">+</button>
+    <figure class="donut" role="img" aria-label="整体完成度 0%">
+      <svg viewBox="0 0 92 92">
+        <circle class="track" cx="46" cy="46" r="40" stroke-width="12"></circle>
+        <circle id="ring" class="ring" cx="46" cy="46" r="40" stroke-width="12"></circle>
+      </svg>
+      <figcaption id="pctText">0%</figcaption>
+    </figure>
 
     <div class="done-screen" id="done">
       <div class="card">

@@ -57,10 +57,18 @@ body{
 @supports not (scrollbar-gutter:stable){
   .panel__body{ overflow-y:scroll; padding-right:calc(var(--gap) + 8px); }
 }
-.fab{ position:fixed; left:50%; transform:translateX(-50%);
-      bottom:calc(16px + env(safe-area-inset-bottom)); width:92px; height:92px; border-radius:50%;
-      background:var(--accent); color:#fff; border:none; box-shadow:var(--shadow); cursor:pointer;
-      display:flex; align-items:center; justify-content:center; font-size:32px; }
+.donut{ position:fixed; left:50%; transform:translateX(-50%);
+        bottom:calc(16px + env(safe-area-inset-bottom)); width:92px; height:92px;
+        display:grid; place-items:center; }
+.donut svg, .donut figcaption{ grid-area:1/1; }
+.donut circle{ fill:none; stroke-width:12; }
+.donut .track{ stroke:#e5e5ea; }
+.donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg);
+               transition:stroke-dashoffset 200ms ease-out; }
+@media (prefers-reduced-motion: reduce){
+  .donut .ring{ transition:none; }
+}
+.donut figcaption{ font-weight:700; }
 
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important;}
@@ -75,6 +83,8 @@ body{
   border:1px solid var(--border); border-radius:18px;
   box-shadow: 0 6px 16px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.4);
   padding:14px 16px; margin-bottom:14px;
+  will-change:transform;
+  transition:transform 220ms cubic-bezier(0.2,0,0,1), opacity 220ms;
 }
 .subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
 .tasks{ margin:0; padding:0; list-style:none; }
@@ -128,9 +138,6 @@ body{
   box-shadow: 0 6px 16px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.4); }
 .aside h3{ margin:2px 0 12px; font-size:16px; font-weight:700; color:var(--muted); }
 
-.donut{ width:100%; display:grid; place-items:center; }
-.donut svg{ width:min(260px, 70vw); height:auto; }
-.donut .pct{ font-weight:800; font-size:26px; text-anchor:middle; dominant-baseline: central; }
 
 /* 完成屏 */
 .done-screen{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:24px; }
@@ -177,12 +184,6 @@ body{
 .board .task{ padding:10px 2px; }
 
 /* 甜甜圈居下，尺寸自适应 */
-.donut{ width:var(--container); margin:16px auto 4px; display:grid; place-items:center; }
-.donut svg{ width:min(220px, 60vw); height:auto; }
-.donut circle{ fill:none; }
-.donut .track{ stroke:#e5e5ea; }
-.donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg); transition:stroke-dashoffset .4s ease; }
-.donut .pct{ font-weight:800; font-size:24px; text-anchor:middle; dominant-baseline:central; }
 
 /* 隐藏动画 canvas，避免占位撑开布局 */
 #ion-canvas{
