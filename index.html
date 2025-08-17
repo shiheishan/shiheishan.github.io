@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>作业预览 · 苹果拟物</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrap" id="app">
+    <canvas id="ion-canvas"></canvas>
+
+    <main class="paper" id="paper">
+      <div class="date-card" aria-live="polite">
+        <span id="now">——</span>
+      </div>
+
+      <div class="content">
+        <section>
+          <div id="subjects"></div>
+        </section>
+        <aside class="aside">
+          <h3>今日进度</h3>
+          <div class="donut">
+            <svg viewBox="0 0 160 160" aria-hidden="true">
+              <defs>
+                <filter id="innershadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feOffset dx="0" dy="2"/>
+                  <feGaussianBlur stdDeviation="2" result="offset-blur"/>
+                  <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+                  <feFlood flood-color="#000" flood-opacity="0.25" result="color"/>
+                  <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+                  <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+                </filter>
+              </defs>
+              <circle cx="80" cy="80" r="60" fill="#fff" filter="url(#innershadow)" />
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#e6e6ea" stroke-width="16"/>
+              <circle id="ring" cx="80" cy="80" r="60" fill="none" stroke="var(--accent)" stroke-width="16" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" transform="rotate(-90 80 80)"/>
+              <text x="80" y="80" class="pct" id="pctText">0%</text>
+            </svg>
+          </div>
+          <div class="hint">勾选作业可更新进度；全部完成后页面会“离子消除”。</div>
+        </aside>
+      </div>
+
+      <div class="done-screen" id="done">
+        <div class="card">
+          <h1>今日任务已完成</h1>
+          <p>请好好休息。</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
