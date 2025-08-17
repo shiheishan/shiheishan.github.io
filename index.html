@@ -14,10 +14,21 @@
       <span id="now">——</span>
     </div>
 
-    <div class="content">
-      <section>
-        <div id="subjects"></div>
-      </section>
+    
+    <div class="board card">
+      <div id="subjects"></div>
+    </div>
+
+    <div class="donut" aria-label="进度甜甜圈">
+      <svg viewBox="0 0 140 140" role="img" aria-labelledby="donut-title">
+        <title id="donut-title">完成进度</title>
+        <circle class="track" cx="70" cy="70" r="60" stroke-width="12"></circle>
+        <circle class="ring" id="ring" cx="70" cy="70" r="60" stroke-width="12"
+                stroke-dasharray="377" stroke-dashoffset="377"></circle>
+        <text id="pctText" class="pct" x="70" y="76">0%</text>
+      </svg>
+    </div>
+</section>
     </div>
 
     <div class="done-screen" id="done">
