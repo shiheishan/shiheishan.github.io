@@ -84,3 +84,40 @@ hr {
     transition: none !important;
   }
 }
+
+/* === Strikethrough anti-flicker (composite-only) === */
+.task .text{
+  position: relative;
+  display: inline-block;
+  color: var(--label);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  transition: color var(--dur-med) var(--ease-standard);
+  will-change: color;
+}
+.task .text::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 0.58em;
+  height: 1px;
+  background: var(--strike-color, rgba(0,0,0,.5));
+  transform-origin: left center;
+  transform: scaleX(0) translateZ(0);
+  transition: transform var(--dur-med) var(--ease-standard);
+  will-change: transform;
+  pointer-events: none;
+  contain: paint;
+}
+/* 选中态：线展开 + 文本降权 */
+.task input[type="checkbox"]:checked + .checkbox + .text{
+  color: var(--secondary-label);
+}
+.task input[type="checkbox"]:checked + .checkbox + .text::after{
+  transform: scaleX(1) translateZ(0);
+}
+@media (prefers-reduced-motion: reduce){
+  .task .text{ transition: none; }
+  .task .text::after{ transition: none; }
+}

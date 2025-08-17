@@ -5,7 +5,7 @@ export function render(mount, state) {
   const frag = document.createDocumentFragment();
   state.forEach(subj => {
     const card = document.createElement('div');
-    card.className = 'subject';
+    card.className = 'subject card';
     card.dataset.id = subj.id;
     card.dataset.seq = String(subj.seq);
     const title = document.createElement('div');
