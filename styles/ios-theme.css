@@ -1,0 +1,97 @@
+html {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--label);
+  line-height: 1.5;
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--label);
+}
+
+* { box-sizing: border-box; }
+
+a { color: var(--tint); }
+
+button,
+input,
+select,
+textarea,
+a,
+.cell {
+  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--label);
+  background: var(--fill);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cell {
+  min-height: 44px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--separator);
+}
+
+button:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  background: color-mix(in srgb, var(--fill) 80%, var(--tint));
+}
+
+button:active,
+input:active,
+select:active,
+textarea:active,
+a:active,
+.cell:active {
+  transform: scale(0.98);
+}
+
+:focus-visible {
+  outline: 2px solid var(--tint);
+  outline-offset: 2px;
+}
+
+hr {
+  height: 1px;
+  border: 0;
+  background: var(--separator);
+  margin: 0;
+}
+
+.glass {
+  background: color-mix(in oklab, var(--surface) 60%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--separator);
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
