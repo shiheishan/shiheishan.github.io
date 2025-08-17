@@ -1,15 +1,21 @@
 (() => {
-  if (window.__HW_BOOTED__) return; // 一次性守卫（防重复）
-  window.__HW_BOOTED__ = true;
+  if (window.__HW_BOOTED__) return; window.__HW_BOOTED__ = true;
 
   const CSV_URL = `/data/homework.csv?ts=${Date.now()}`;
-  const LEGACY_SEL = [
-    '#subjects-root',
-    '[data-role="subjects"]',
-    '.subjects',
-    '.subject-list',
-    '.subject-card'
-  ].join(',');
+  const LS_KEY = 'hw:done:v1';
+
+  // 简易 hash，作为任务 id（subject|task）
+  function idOf(subject, task) {
+    const s = `${subject}||${task}`;
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 16777619) >>> 0; }
+    return h.toString(36);
+  }
+
+  function loadDone() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
+  }
+  function saveDone(map) { try { localStorage.setItem(LS_KEY, JSON.stringify(map)); } catch { /* ignore */ } }
 
   function parseCSV(text) {
     if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
@@ -24,100 +30,118 @@
     }
     if (cur.length || row.length){ row.push(cur); if(row.some(c=>c.trim()!=='')) rows.push(row); }
     if (!rows.length) return { header:[], data:[] };
-    const header = rows[0].map(h=>h.trim());
+    const header = rows[0].map(h=>h.trim().toLowerCase());
     const data = rows.slice(1).map(r => {
-      const o={}; header.forEach((h,i)=>o[h]=(r[i]??'').trim()); return o;
+      const obj = {}; header.forEach((h,i)=> obj[h] = (r[i] ?? '').trim());
+      return obj;
     });
-    return { header, data };
+    return { data };
   }
 
   function ensureRoot() {
     let root = document.querySelector('#homework-root');
-    if (!root) {
-      root = document.createElement('div');
-      root.id = 'homework-root';
-      (document.querySelector('main') || document.body).appendChild(root);
-    }
+    if (!root) { root = document.createElement('div'); root.id = 'homework-root'; (document.querySelector('main') || document.body).appendChild(root); }
+    // 隐藏旧容器，避免重复
+    const legacy = document.querySelector('#subjects-root'); if (legacy && legacy !== root) legacy.style.display = 'none';
     return root;
   }
 
-  function killLegacyOnce() {
-    // 样式级隐藏（全局开关）
-    document.body.setAttribute('data-hide-legacy-subjects', '1');
-    // DOM 级移除：凡匹配旧选择器且不在 #homework-root 内的，一律移除
-    const root = document.querySelector('#homework-root');
-    document.querySelectorAll(LEGACY_SEL).forEach(el => {
-      if (!root || !root.contains(el)) el.remove();
-    });
+  function ensureRing() {
+    // 仅保留一个进度环
+    let ring = document.querySelector('[data-role="progress-ring"]') || document.querySelector('#progress-ring');
+    if (!ring) {
+      ring = document.createElement('div');
+      ring.id = 'progress-ring';
+      ring.setAttribute('data-role','progress-ring');
+      ring.innerHTML = `<div class="hw-ring"></div><div class="hw-ring-label" data-role="progress-label">0%</div>`;
+      document.body.appendChild(ring);
+    } else {
+      document.body.appendChild(ring);
+    }
+    Object.assign(ring.style, {position:'fixed', left:'50%', bottom:'24px', transform:'translateX(-50%)', zIndex:'999'});
+    return ring;
   }
 
-  function observeAndKillLegacy() {
-    const root = document.querySelector('#homework-root');
-    const mo = new MutationObserver(() => {
-      document.querySelectorAll(LEGACY_SEL).forEach(el => {
-        if (!root || !root.contains(el)) el.remove();
-      });
-    });
-    mo.observe(document.body, { childList: true, subtree: true });
+  function renderRing(percent) {
+    percent = Math.max(0, Math.min(100, Math.round(percent)));
+    const ring = ensureRing();
+    const deg = percent * 3.6;
+    const shell = ring.querySelector('.hw-ring');
+    const label = ring.querySelector('[data-role="progress-label"]') || ring;
+    if (shell) shell.style.background = `conic-gradient(#22c55e ${deg}deg, #e5e7eb 0deg)`;
+    label.textContent = `${percent}%`;
   }
 
-  function render({ data }) {
+  function render(data) {
     const root = ensureRoot();
+    const done = loadDone();
     root.innerHTML = '';
+
     // 分组（按出现顺序）
     const groups = [];
     const map = new Map();
-    for (const rec of data) {
-      const s = (rec.subject||'').trim();
-      const t = (rec.task||'').trim();
-      if (!s && !t) continue;
-      if (!map.has(s)) { map.set(s, {subject:s, items:[]}); groups.push(map.get(s)); }
-      map.get(s).items.push(t);
+    for (const r of data) {
+      const subject = (r.subject || '').trim();
+      const task = (r.task || '').trim();
+      if (!subject && !task) continue;
+      if (!map.has(subject)) { map.set(subject, {subject, items:[]}); groups.push(map.get(subject)); }
+      map.get(subject).items.push({ subject, task, id: idOf(subject, task) });
     }
+
+    let total = 0, checked = 0;
+
     for (const g of groups) {
       const card = document.createElement('section');
       card.className = 'hw-card';
-      card.innerHTML = `
-        <h2 class="hw-title">${g.subject || '未命名学科'}</h2>
-        <ul class="hw-list">
-          ${g.items.map(t => `<li class="hw-item">${t}</li>`).join('')}
-        </ul>`;
+      const list = document.createElement('ul');
+      list.className = 'hw-list';
+
+      for (const it of g.items) {
+        total++;
+        const li = document.createElement('li');
+        li.className = 'hw-item';
+        const isDone = !!done[it.id];
+        if (isDone) { li.classList.add('hw-done'); checked++; }
+
+        li.innerHTML = `
+          <button class="hw-check" type="button" aria-pressed="${isDone}"></button>
+          <div class="hw-text">${it.task || ''}</div>
+        `;
+
+        li.querySelector('.hw-check').addEventListener('click', () => {
+          const now = li.classList.toggle('hw-done');
+          li.querySelector('.hw-check').setAttribute('aria-pressed', now ? 'true' : 'false');
+          if (now) { done[it.id] = 1; checked++; } else { delete done[it.id]; checked--; }
+          saveDone(done);
+          renderRing(total ? (checked / total) * 100 : 0);
+        });
+
+        list.appendChild(li);
+      }
+
+      card.innerHTML = `<h2 class="hw-title">${g.subject || '未命名学科'}</h2>`;
+      card.appendChild(list);
       root.appendChild(card);
     }
+
+    renderRing(total ? (checked / total) * 100 : 0);
   }
 
   async function boot() {
     try {
-      killLegacyOnce();
-      observeAndKillLegacy();
-
       const res = await fetch(CSV_URL, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
-      const parsed = parseCSV(text);
-      render(parsed);
-
-      // 进度环若有多个，仅保留一个并固定到底部中央
-      const rings = Array.from(document.querySelectorAll('[data-role="progress-ring"], #progress-ring'));
-      if (rings.length) {
-        const first = rings[0];
-        document.body.appendChild(first);
-        first.style.position = 'fixed';
-        first.style.left = '50%';
-        first.style.bottom = '24px';
-        first.style.transform = 'translateX(-50%)';
-        for (let i = 1; i < rings.length; i++) rings[i].remove();
-      }
+      const { data } = parseCSV(text);
+      render(data);
     } catch (e) {
       console.warn('[homework] boot failed:', e);
       const root = ensureRoot();
       root.innerHTML = `<div class="hw-error">加载作业数据失败，请稍后刷新。</div>`;
+      renderRing(0);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot, { once:true });
-  } else {
-    (window.requestIdleCallback || setTimeout)(boot, 0);
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once:true });
+  else (window.requestIdleCallback || setTimeout)(boot, 0);
 })();

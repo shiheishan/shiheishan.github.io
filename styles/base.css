@@ -38,3 +38,27 @@
 [data-hide-legacy-subjects] .subject-list {
   display: none !important;
 }
+/* Homework namespace */
+#homework-root { padding: 0 8px 96px; }
+.hw-card { background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:16px 12px; }
+.hw-title { margin:0 0 8px; font-size:20px; font-weight:700; color:#1d1d1f; }
+.hw-list { margin:0; padding:0; list-style:none; }
+.hw-item { display:flex; align-items:flex-start; gap:12px; margin:10px 0; }
+.hw-text { position:relative; color:#1d1d1f; }
+
+/* 圆形可勾选 + 删除线动效（iOS 感） */
+:root{ --hw-dur-fast:160ms; --hw-dur-mid:260ms; --hw-ease:cubic-bezier(.22,.61,.36,1); --hw-done:#28a745; --hw-border:#d2d2d7; --hw-strike:rgba(0,0,0,.5); }
+.hw-check{ width:22px;height:22px;border-radius:50%;border:2px solid var(--hw-border); background:#fff; position:relative; flex:0 0 22px; margin-top:2px;
+  transition: border-color var(--hw-dur-fast) var(--hw-ease), background-color var(--hw-dur-fast) var(--hw-ease); }
+.hw-check::after{ content:""; position:absolute; inset:4px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(45deg) scale(0); transform-origin:center; transition:transform var(--hw-dur-fast) var(--hw-ease); }
+.hw-item.hw-done .hw-check{ background:var(--hw-done); border-color:var(--hw-done); }
+.hw-item.hw-done .hw-check::after{ transform:rotate(45deg) scale(1); }
+.hw-text::after{ content:""; position:absolute; left:0; right:0; top:0.9em; height:1px; background:var(--hw-strike); transform:scaleX(0); transform-origin:left; transition:transform var(--hw-dur-mid) var(--hw-ease); }
+.hw-item.hw-done .hw-text{ color:var(--hw-strike); }
+.hw-item.hw-done .hw-text::after{ transform:scaleX(1); }
+
+/* 进度环（若页面已有旧样式，此处仅做兜底） */
+#progress-ring{ width:96px;height:96px; display:grid; place-items:center; }
+#progress-ring .hw-ring{ width:96px;height:96px;border-radius:50%; background:conic-gradient(#e5e7eb 0deg,#e5e7eb 360deg);
+  -webkit-mask:radial-gradient(farthest-side,#0000 68%,#000 70%); mask:radial-gradient(farthest-side,#0000 68%,#000 70%); }
+#progress-ring .hw-ring-label{ position:absolute; font-weight:700; }
