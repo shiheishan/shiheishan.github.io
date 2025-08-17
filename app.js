@@ -77,13 +77,11 @@ function updateProgress(){
   }
 }
 
-// ====== 实时日期时钟 ======
-function pad(n){ return n.toString().padStart(2,'0'); }
+// ====== 实时时间 ======
 function tick(){
-  const d = new Date();
-  const str = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const str = new Date().toLocaleTimeString('zh-CN', { hour12: false });
   document.getElementById('now').textContent = str;
-  setTimeout(tick, 250);
+  setTimeout(tick, 1000);
 }
 
 // ====== 离子消除动画（简版粒子溶解） ======
