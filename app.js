@@ -15,10 +15,12 @@ const DATA = [
 const subjectsEl = document.getElementById('subjects');
 const ring = document.getElementById('ring');
 const pctText = document.getElementById('pctText');
+const donut = document.querySelector('.donut');
 const app = document.getElementById('app');
 const ionCanvas = document.getElementById('ion-canvas');
 
-const CIRCUM = 2 * Math.PI * 60; // r = 60
+const RADIUS = 40;
+const CIRCUM = 2 * Math.PI * RADIUS;
 
 function render(){
   const frag = document.createDocumentFragment();
@@ -46,7 +48,6 @@ function render(){
   subjectsEl.appendChild(frag);
 
   subjectsEl.addEventListener('change', onToggle, { passive: true });
-  updateProgress();
 }
 
 function allInputs(){ return [...subjectsEl.querySelectorAll('input[type="checkbox"]')]; }
@@ -54,8 +55,38 @@ function allInputs(){ return [...subjectsEl.querySelectorAll('input[type="checkb
 function onToggle(e){
   const target = e.target;
   if(target && target.matches('input[type="checkbox"]')){
-    updateProgress();
+    updateAll();
   }
+}
+
+function updateAll(){
+  const subjects = [...subjectsEl.children];
+  subjects.forEach(sub => {
+    const boxes = sub.querySelectorAll('input[type="checkbox"]');
+    const allDone = boxes.length > 0 && [...boxes].every(b => b.checked);
+    sub.dataset.complete = allDone;
+  });
+  const prev = new Map(subjects.map(el => [el, el.getBoundingClientRect()]));
+  const incomplete = subjects.filter(el => el.dataset.complete !== 'true');
+  const complete = subjects.filter(el => el.dataset.complete === 'true');
+  [...incomplete, ...complete].forEach(el => subjectsEl.appendChild(el));
+  const after = new Map([...subjectsEl.children].map(el => [el, el.getBoundingClientRect()]));
+  after.forEach((rect, el) => {
+    const first = prev.get(el);
+    const dx = first.left - rect.left;
+    const dy = first.top - rect.top;
+    if(dx || dy){
+      el.style.transition = 'none';
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+      el.style.opacity = '0.6';
+      requestAnimationFrame(() => {
+        el.style.transition = '';
+        el.style.transform = '';
+        el.style.opacity = '';
+      });
+    }
+  });
+  updateProgress();
 }
 
 function updateProgress(){
@@ -71,17 +102,19 @@ function updateProgress(){
   if(pctText){
     pctText.textContent = pct + '%';
   }
+  if(donut){
+    donut.setAttribute('aria-label', `整体完成度 ${pct}%`);
+  }
 
   if(done === total && total > 0){
     celebrateAndVanish();
   }
 }
 
-// ====== 实时时间 ======
-function tick(){
-  const str = new Date().toLocaleTimeString('zh-CN', { hour12: false });
-  document.getElementById('now').textContent = str;
-  setTimeout(tick, 1000);
+// ====== 时间 ======
+const nowEl = document.getElementById('now');
+if(nowEl){
+  nowEl.textContent = new Date().toLocaleString('zh-CN', { hour12: false });
 }
 
 // ====== 离子消除动画（简版粒子溶解） ======
@@ -135,4 +168,4 @@ function celebrateAndVanish(){
 
 // ====== 启动 ======
 render();
-tick();
+updateAll();
