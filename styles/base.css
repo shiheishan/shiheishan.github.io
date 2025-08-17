@@ -38,6 +38,7 @@
 [data-hide-legacy-subjects] .subject-list {
   display: none !important;
 }
+/* stylelint-disable no-descending-specificity */
 /* Homework namespace */
 #homework-root { padding: 0 8px 96px; }
 .hw-card { background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:16px 12px; }
@@ -62,3 +63,48 @@
 #progress-ring .hw-ring{ width:96px;height:96px;border-radius:50%; background:conic-gradient(#e5e7eb 0deg,#e5e7eb 360deg);
   -webkit-mask:radial-gradient(farthest-side,#0000 68%,#000 70%); mask:radial-gradient(farthest-side,#0000 68%,#000 70%); }
 #progress-ring .hw-ring-label{ position:absolute; font-weight:700; }
+/* Homework namespace */
+#homework-root { padding: 0 8px 110px; } /* 给底部进度环留空 */
+.hw-card  { background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:16px 12px; }
+.hw-title { margin:0 0 8px; font-size:20px; font-weight:700; color:#1d1d1f; }
+.hw-list  { margin:0; padding:0; list-style:none; }
+.hw-item  { display:flex; align-items:flex-start; gap:12px; margin:10px 0; will-change:transform; }
+.hw-text  { position:relative; color:#1d1d1f; }
+
+/* 勾选圆形：防变形的关键重置 */
+:root{ --hw-size:22px; --hw-dur-fast:160ms; --hw-dur-mid:260ms; --hw-ease:cubic-bezier(.22,.61,.36,1); --hw-done:#22c55e; --hw-border:#d2d2d7; --hw-strike:rgba(0,0,0,.55); }
+.hw-check{
+  appearance:none; -webkit-appearance:none; padding:0; margin-top:2px;
+  width:var(--hw-size); height:var(--hw-size); aspect-ratio:1 / 1;
+  border-radius:999px; border:2px solid var(--hw-border); background:#fff;
+  display:inline-grid; place-items:center; box-sizing:border-box; line-height:0; cursor:pointer;
+  transition:border-color var(--hw-dur-fast) var(--hw-ease), background-color var(--hw-dur-fast) var(--hw-ease), transform var(--hw-dur-fast) var(--hw-ease);
+}
+.hw-check::after{
+  content:""; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff;
+  transform:rotate(-45deg) scale(0); transform-origin:left bottom; transition:transform var(--hw-dur-fast) var(--hw-ease);
+}
+.hw-item.hw-done .hw-check{ background:var(--hw-done); border-color:var(--hw-done); }
+.hw-item.hw-done .hw-check::after{ transform:rotate(-45deg) scale(1); }
+
+/* 删除线过渡 */
+.hw-text::after{
+  content:""; position:absolute; left:0; right:0; top:0.9em; height:1px; background:var(--hw-strike);
+  transform:scaleX(0); transform-origin:left; transition:transform var(--hw-dur-mid) var(--hw-ease);
+}
+.hw-item.hw-done .hw-text{ color:var(--hw-strike); }
+.hw-item.hw-done .hw-text::after{ transform:scaleX(1); }
+
+/* FLIP 过渡 */
+.hw-moving{ transition: transform var(--hw-dur-mid) var(--hw-ease), opacity var(--hw-dur-mid) var(--hw-ease); }
+
+/* 甜甜圈示图 + 数字（含动画兜底） */
+#progress-ring{ width:96px; height:96px; display:grid; place-items:center; }
+#progress-ring .hw-ring{
+  width:96px; height:96px; border-radius:50%;
+  background:conic-gradient(#e5e7eb 0deg, #e5e7eb 360deg);
+  -webkit-mask:radial-gradient(farthest-side,#0000 68%,#000 70%);
+          mask:radial-gradient(farthest-side,#0000 68%,#000 70%);
+}
+#progress-ring .hw-ring-label{ position:absolute; font-weight:700; font-size:18px; }
+/* stylelint-enable no-descending-specificity */
