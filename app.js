@@ -69,7 +69,7 @@ function updateCompletion(){
   subjects.forEach(sub => {
     const boxes = sub.querySelectorAll('input[type="checkbox"]');
     const allDone = boxes.length > 0 && [...boxes].every(b => b.checked);
-    sub.dataset.complete = allDone;
+    sub.dataset.complete = allDone ? 'true' : 'false';
   });
   updateProgress();
 }
@@ -81,13 +81,21 @@ function scheduleResort(){
     if(isAnimating) return;
     pending = false;
     resortWithFLIP();
-  }, 120);
+  }, 100);
 }
 
 function resortWithFLIP(){
   const list = subjectsEl;
   const items = Array.from(list.children);
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const supports = window.requestAnimationFrame && window.CSS && CSS.supports && CSS.supports('color', 'var(--x)');
+
+  items.forEach(el => {
+    el.style.transition = 'none';
+    el.style.transform = '';
+    el.style.opacity = '';
+    void el.offsetWidth;
+  });
   const first = new Map(items.map(el => [el, el.getBoundingClientRect()]));
 
   items.sort((a,b)=>{
@@ -96,51 +104,56 @@ function resortWithFLIP(){
     if (ca !== cb) return ca - cb;
     return Number(a.dataset.seq) - Number(b.dataset.seq);
   });
-
   items.forEach(el => list.appendChild(el));
   list.classList.add('reordering');
-  if(reduce){
+
+  if(reduce || !supports){
     list.classList.remove('reordering');
     return;
   }
-  isAnimating = true;
+
   const last = new Map(items.map(el => [el, el.getBoundingClientRect()]));
-  let active = 0;
+  const moved = [];
   items.forEach(el => {
     const f = first.get(el), l = last.get(el);
     const dx = f.left - l.left;
     const dy = f.top - l.top;
     if(dx || dy){
-      active++;
       el.style.transform = `translate(${dx}px,${dy}px)`;
       el.style.opacity = '0.96';
-      requestAnimationFrame(()=>{
-        el.style.transition = `transform var(--move-dur) var(--move-ease), opacity var(--move-dur) var(--move-ease)`;
+      moved.push(el);
+    }
+  });
+
+  if(moved.length === 0){
+    list.classList.remove('reordering');
+    if(pending){ pending = false; resortWithFLIP(); }
+    return;
+  }
+
+  isAnimating = true;
+  requestAnimationFrame(() => {
+    items.forEach(el => { el.style.transition = ''; });
+    requestAnimationFrame(() => {
+      let active = moved.length;
+      moved.forEach(el => {
+        const onEnd = (e) => {
+          if(e.propertyName !== 'transform') return;
+          el.removeEventListener('transitionend', onEnd);
+          el.style.transform = '';
+          el.style.opacity = '';
+          if(--active === 0){
+            list.classList.remove('reordering');
+            isAnimating = false;
+            if(pending){ pending = false; resortWithFLIP(); }
+          }
+        };
+        el.addEventListener('transitionend', onEnd);
         el.style.transform = 'translate(0,0)';
         el.style.opacity = '';
       });
-      el.addEventListener('transitionend', () => {
-        el.style.transition = '';
-        el.style.transform = '';
-        if(--active === 0){
-          list.classList.remove('reordering');
-          isAnimating = false;
-          if(pending){
-            pending = false;
-            resortWithFLIP();
-          }
-        }
-      }, { once: true });
-    }
+    });
   });
-  if(active===0){
-    list.classList.remove('reordering');
-    isAnimating = false;
-    if(pending){
-      pending = false;
-      resortWithFLIP();
-    }
-  }
 }
 
 function updateProgress(){
