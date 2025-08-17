@@ -1,6 +1,6 @@
 import { render, updateCompletion } from './render.js';
-import { reorder } from '../anim/flip.js';
 import { debounce } from '../utils/dom.js';
+import { flipReorder, animateAutoHeight } from '/scripts/flip.js';
 import { state, getState, setState, addSubject as add, removeSubject as remove, updateTask } from './state.js';
 import { sortByCompleteThenSeq } from './sort.js';
 import { selectProgress } from './state.js';
@@ -10,8 +10,11 @@ export function initHwPanel({ mount, onProgress }) {
   updateCompletion(mount, state);
   onProgress(selectProgress());
   const debounced = debounce(() => {
-    const items = Array.from(mount.children);
-    reorder(items, mount, sortByCompleteThenSeq);
+    animateAutoHeight(mount, 180);
+    flipReorder(mount, '.card', () => {
+      const items = Array.from(mount.children).sort(sortByCompleteThenSeq);
+      items.forEach(el => mount.appendChild(el));
+    }, { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)', stagger: 24 });
   }, 100);
   mount.addEventListener('change', e => {
     const input = e.target;
