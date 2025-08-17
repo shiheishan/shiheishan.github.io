@@ -65,9 +65,13 @@ function updateProgress(){
   const done = inputs.filter(i=>i.checked).length;
   const pct = total ? Math.round(done/total*100) : 100;
 
-  ring.style.strokeDasharray = CIRCUM;
-  ring.style.strokeDashoffset = (1 - pct/100) * CIRCUM;
-  pctText.textContent = pct + '%';
+  if(ring){
+    ring.style.strokeDasharray = CIRCUM;
+    ring.style.strokeDashoffset = (1 - pct/100) * CIRCUM;
+  }
+  if(pctText){
+    pctText.textContent = pct + '%';
+  }
 
   if(done === total && total > 0){
     celebrateAndVanish();

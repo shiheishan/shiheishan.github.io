@@ -48,8 +48,7 @@ body{
 }
 
 /* 内容布局 */
-.content{ margin-top:18px; display:grid; grid-template-columns: 1fr 310px; gap:18px; }
-@media (max-width: 900px){ .content{ grid-template-columns: 1fr; } }
+.content{ margin-top:18px; }
 
 /* 学科卡片（回归白卡片风格） */
 .subject{
