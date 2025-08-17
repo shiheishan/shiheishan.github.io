@@ -154,3 +154,11 @@ body{
 .donut .track{ stroke:#e5e5ea; }
 .donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg); transition:stroke-dashoffset .4s ease; }
 .donut .pct{ font-weight:800; font-size:24px; text-anchor:middle; dominant-baseline:central; }
+
+/* 隐藏动画 canvas，避免占位撑开布局 */
+#ion-canvas{
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+}
