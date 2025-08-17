@@ -18,3 +18,15 @@ src/            # 源码：入口、作业板块、甜甜圈、工具等
 ## 二次开发
 修改 `src/hw-panel/*` 可独立定制作业 UI 与交互；入口逻辑位于 `src/app.js`。
 使用 `npm run lint` 可运行 ESLint 与 Stylelint。
+
+## 如何修改作业（两列极简）
+只需编辑 `/data/homework.csv`；每行：`subject,task`；行顺序即页面顺序；保存提交后自动生效。
+
+示例：
+
+```
+subject,task
+语文,背诵第3课
+数学,P56 第1-10题
+英语,Unit 3 单词
+```
