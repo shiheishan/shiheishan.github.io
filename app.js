@@ -23,8 +23,6 @@ const RADIUS = 40;
 const CIRCUM = 2 * Math.PI * RADIUS;
 let seqCounter = 0;
 let resortTimer = null;
-let isAnimating = false;
-let pending = false;
 
 function render(){
   const frag = document.createDocumentFragment();
@@ -75,82 +73,79 @@ function updateCompletion(){
 }
 
 function scheduleResort(){
-  pending = true;
   clearTimeout(resortTimer);
   resortTimer = setTimeout(() => {
-    if(isAnimating) return;
-    pending = false;
-    resortWithFLIP();
+    const items = Array.from(subjectsEl.children);
+    resortWithFLIP(items, subjectsEl);
   }, 100);
 }
 
-function resortWithFLIP(){
-  const list = subjectsEl;
-  const items = Array.from(list.children);
-  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const supports = window.requestAnimationFrame && window.CSS && CSS.supports && CSS.supports('color', 'var(--x)');
+function sortByCompleteThenSeq(a, b){
+  const ca = a.dataset.complete === 'true' ? 1 : 0;
+  const cb = b.dataset.complete === 'true' ? 1 : 0;
+  if(ca !== cb) return ca - cb;
+  return Number(a.dataset.seq) - Number(b.dataset.seq);
+}
 
-  items.forEach(el => {
-    el.style.transition = 'none';
-    el.style.transform = '';
-    el.style.opacity = '';
-    void el.offsetWidth;
-  });
+function resortWithFLIP(items, container){
+  // 0) 取消进行中的动画
+  items.forEach(el => { el._flipAnim?.cancel(); });
+
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const supports = 'animate' in Element.prototype;
+
+  // 1) 测量 first
   const first = new Map(items.map(el => [el, el.getBoundingClientRect()]));
 
-  items.sort((a,b)=>{
-    const ca = a.dataset.complete === 'true' ? 1 : 0;
-    const cb = b.dataset.complete === 'true' ? 1 : 0;
-    if (ca !== cb) return ca - cb;
-    return Number(a.dataset.seq) - Number(b.dataset.seq);
-  });
-  items.forEach(el => list.appendChild(el));
-  list.classList.add('reordering');
+  // 2) 重排 DOM
+  items.sort(sortByCompleteThenSeq).forEach(el => container.appendChild(el));
 
   if(reduce || !supports){
-    list.classList.remove('reordering');
+    items.forEach(el => { el.style.transform = ''; });
     return;
   }
 
+  // 3) 测量 last
   const last = new Map(items.map(el => [el, el.getBoundingClientRect()]));
-  const moved = [];
-  items.forEach(el => {
+
+  // 4) 计算位移差
+  const motions = items.map(el => {
     const f = first.get(el), l = last.get(el);
-    const dx = f.left - l.left;
-    const dy = f.top - l.top;
-    if(dx || dy){
-      el.style.transform = `translate(${dx}px,${dy}px)`;
-      el.style.opacity = '0.96';
-      moved.push(el);
-    }
-  });
+    const dx = f.left - l.left, dy = f.top - l.top;
+    return { el, dx, dy };
+  }).filter(m => m.dx || m.dy);
 
-  if(moved.length === 0){
-    list.classList.remove('reordering');
-    if(pending){ pending = false; resortWithFLIP(); }
-    return;
-  }
+  if(motions.length === 0) return;
 
-  isAnimating = true;
+  // 5) 帧 A：设置初始位移并强制回流
   requestAnimationFrame(() => {
-    items.forEach(el => { el.style.transition = ''; });
+    motions.forEach(({el, dx, dy}) => {
+      el.style.transform = `translate(${dx}px,${dy}px)`;
+    });
+    void container.offsetWidth;
+
+    // 6) 帧 B：使用 WAAPI 播放动画
     requestAnimationFrame(() => {
-      let active = moved.length;
-      moved.forEach(el => {
-        const onEnd = (e) => {
-          if(e.propertyName !== 'transform') return;
-          el.removeEventListener('transitionend', onEnd);
+      const rootStyle = getComputedStyle(document.documentElement);
+      const duration = parseFloat(rootStyle.getPropertyValue('--move-dur'));
+      const easing = rootStyle.getPropertyValue('--move-ease').trim() || 'ease';
+      let active = motions.length;
+      container.classList.add('reordering');
+      motions.forEach(({el, dx, dy}) => {
+        el._flipAnim = el.animate(
+          [
+            { transform: `translate(${dx}px,${dy}px)` },
+            { transform: 'translate(0,0)' }
+          ],
+          { duration, easing, fill: 'both' }
+        );
+        const clear = () => {
           el.style.transform = '';
-          el.style.opacity = '';
-          if(--active === 0){
-            list.classList.remove('reordering');
-            isAnimating = false;
-            if(pending){ pending = false; resortWithFLIP(); }
-          }
+          el._flipAnim = null;
+          if(--active === 0) container.classList.remove('reordering');
         };
-        el.addEventListener('transitionend', onEnd);
-        el.style.transform = 'translate(0,0)';
-        el.style.opacity = '';
+        el._flipAnim.addEventListener('finish', clear, { once: true });
+        el._flipAnim.addEventListener('cancel', clear, { once: true });
       });
     });
   });
@@ -236,4 +231,4 @@ function celebrateAndVanish(){
 // ====== 启动 ======
 render();
 updateCompletion();
-resortWithFLIP();
+resortWithFLIP([...subjectsEl.children], subjectsEl);
