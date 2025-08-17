@@ -8,7 +8,8 @@ function animateNumber(el, from, to, dur) {
   function step(ts) {
     if (start === null) start = ts;
     const p = Math.min(1, (ts - start) / dur);
-    const v = Math.round(from + (to - from) * p);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const v = Math.round(from + (to - from) * eased);
     el.textContent = v + '%';
     if (p < 1) {
       raf = requestAnimationFrame(step);
@@ -46,7 +47,7 @@ export function initDonut({ ring, text, donut }) {
       }
     }
     if (donut) {
-      donut.setAttribute('aria-label', `整体完成度 ${pct}%`);
+      donut.setAttribute('aria-valuenow', pct);
     }
     prev = pct;
   }

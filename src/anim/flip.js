@@ -23,10 +23,10 @@ export function reorder(items, container, sortFn) {
     const rootStyle = getComputedStyle(document.documentElement);
     const dur = parseFloat(rootStyle.getPropertyValue('--move-dur')) || 0;
     const ease = rootStyle.getPropertyValue('--move-ease').trim() || 'ease';
-    motions.forEach(({ el }) => {
+    motions.forEach(({ el }, i) => {
       el._flipAnim = el.animate(
         [{ transform: el.style.transform }, { transform: 'translate(0, 0)' }],
-        { duration: dur, easing: ease }
+        { duration: dur, easing: ease, delay: Math.min(i * 16, 96) }
       );
       el.style.transform = '';
     });
