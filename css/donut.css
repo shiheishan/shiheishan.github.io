@@ -1,0 +1,12 @@
+.donut{ position:fixed; left:50%; transform:translateX(-50%);
+        bottom:calc(16px + env(safe-area-inset-bottom)); width:92px; height:92px;
+        display:grid; place-items:center; }
+.donut svg, .donut figcaption{ grid-area:1/1; }
+.donut circle{ fill:none; stroke-width:12; }
+.donut .track{ stroke:#e5e5ea; }
+.donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg);
+               transition:stroke-dashoffset var(--donut-dur) var(--donut-ease); }
+@media (prefers-reduced-motion: reduce){
+  .donut .ring{ transition:none; }
+}
+.donut figcaption{ font-weight:700; }

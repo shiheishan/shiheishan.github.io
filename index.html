@@ -4,20 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>作业预览 · 苹果拟物</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/hw-panel.css" />
+  <link rel="stylesheet" href="/css/donut.css" />
 </head>
 <body>
   <div class="app" id="app">
     <canvas id="ion-canvas"></canvas>
-
     <div class="time-card" aria-live="polite">
       <span id="now">--:--:--</span>
     </div>
-
     <div class="panel">
       <div class="panel__body" id="subjects"></div>
     </div>
-
     <figure class="donut" role="img" aria-label="整体完成度 0%">
       <svg viewBox="0 0 92 92">
         <circle class="track" cx="46" cy="46" r="40" stroke-width="12"></circle>
@@ -25,7 +25,6 @@
       </svg>
       <figcaption id="pctText" aria-live="polite">0%</figcaption>
     </figure>
-
     <div class="done-screen" id="done">
       <div class="card">
         <h1>今日任务已完成</h1>
@@ -33,7 +32,6 @@
       </div>
     </div>
   </div>
-
-  <script src="app.js"></script>
+  <script type="module" src="/src/app.js"></script>
 </body>
 </html>
