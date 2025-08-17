@@ -1,0 +1,174 @@
+/* ===== iOS 拟物 + 流动背景（Aurora · Ocean） ===== */
+:root{
+  --bg-top:#0b1220;
+  --bg-bottom:#0b1220;
+  --paper: transparent;
+  --ink:#f2f2f7;
+  --muted:#a1a1a6;
+  --accent:#34c759;
+  --border:#2c2c2e;
+  --strike:#000; /* 删除线纯黑 */
+  --card:#0f1115e6;
+}
+
+/* Ocean 配色（参考你的组件变量） */
+:root{ --c1:#0ea5e9; --c2:#22d3ee; --c3:#a78bfa; --c4:#f0abfc; }
+
+@media (prefers-color-scheme: light){
+  :root{
+    --ink:#1d1d1f; --muted:#6e6e73; --border:#d2d2d7;
+    --card:#ffffffd9;
+  }
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+body{
+  margin:0; color:var(--ink);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,"Helvetica Neue",Segoe UI,Arial;
+  background: linear-gradient(180deg,var(--bg-top),var(--bg-bottom));
+  overflow-x:hidden;
+}
+
+.wrap{ min-height:100%; display:grid; place-items:center; padding:32px; }
+
+/* 主纸面（外框去除） */
+.paper{
+  width:min(880px, 94vw); min-height:82vh;
+  background:transparent;
+  border-radius:28px; position:relative; padding:28px 28px 20px;
+  box-shadow:none; /* 去除外层阴影 */
+  overflow:hidden;
+}
+.paper::before{ content:none; } /* 去除内侧描边高光 */
+
+/* 时间卡片：液态玻璃 */
+.date-card{
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.35); border-radius:16px; padding:14px 18px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.25);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; letter-spacing:.5px; font-size:20px; color:var(--ink);
+}
+
+/* 内容布局 */
+.content{ margin-top:18px; display:grid; grid-template-columns: 1fr 310px; gap:18px; }
+@media (max-width: 900px){ .content{ grid-template-columns: 1fr; } }
+
+/* 学科卡片：液态玻璃 */
+.subject{
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.35); border-radius:18px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.25);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  padding:14px 16px; margin-bottom:14px;
+}
+.subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
+.tasks{ margin:0; padding:0; list-style:none; }
+
+/* ===== 任务行（自定义勾选 + 渐进删除线 + 文字半透明） ===== */
+@property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
+
+.task{ display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:12px; position:relative; }
+.task:hover{ background:linear-gradient(180deg, rgba(255,255,255,.06), transparent); }
+
+.task input{ position:absolute; opacity:0; pointer-events:none; }
+
+/* 自定义方框（iOS风） */
+.checkbox{
+  width:22px; height:22px; border-radius:8px; border:1px solid var(--border);
+  background:linear-gradient(180deg,#fff,#f3f4f6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  display:inline-grid; place-items:center; flex:0 0 22px; position:relative; overflow:hidden;
+}
+/* 绿色对勾：绝对定位到更合理的位置 */
+.checkbox::after{
+  content:""; position:absolute; left:5px; top:11px; width:12px; height:6px;
+  border-left:3px solid var(--accent); border-bottom:3px solid var(--accent);
+  transform: rotate(-45deg) scale(0); transform-origin: left bottom;
+  transition: transform .28s cubic-bezier(.2,.9,.3,1.5);
+}
+
+/* 文本渐隐 + 删除线随进度推进 */
+.text{
+  position:relative; font-size:16px; letter-spacing:.2px; line-height:1.4;
+  color:transparent; -webkit-background-clip:text; background-clip:text;
+  background-image: linear-gradient(90deg,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,1) calc(var(--p)*100%),
+    rgba(0,0,0,.55) calc((var(--p)*100% + 2%)),
+    rgba(0,0,0,.55) 100%
+  );
+  transition: --p .42s ease;
+}
+.text::after{
+  content:""; position:absolute; left:0; right:0; top:50%; height:2px; border-radius:2px; background:var(--strike);
+  transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform .42s ease;
+}
+
+/* 状态联动 */
+.task input:checked ~ .checkbox::after{ transform: rotate(-45deg) scale(1); }
+.task input:checked ~ .text{ --p: 1; }
+.task input:not(:checked) ~ .text{ --p: 0; }
+
+/* 侧栏：甜甜圈卡片 */
+.aside{ position:relative; background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.06); }
+.aside h3{ margin:2px 0 12px; font-size:16px; font-weight:700; color:var(--muted); }
+
+.donut{ width:100%; display:grid; place-items:center; }
+.donut svg{ width:min(260px, 70vw); height:auto; }
+.donut .pct{ font-weight:800; font-size:26px; text-anchor:middle; dominant-baseline: central; }
+
+/* 完成屏 */
+.done-screen{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:24px; }
+.show-done .done-screen{ display:flex; }
+.done-screen .card{ background:var(--card); border:1px solid var(--border); border-radius:22px; padding:28px 22px; box-shadow:0 12px 26px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08); }
+.done-screen h1{ margin:0 0 6px; font-size:22px; }
+.done-screen p{ margin:0; color:var(--muted); }
+
+/* 离子消除：纸面溶解（平移动画已在 JS 中处理） */
+.disintegrate .paper{ animation: paper-out .9s ease forwards; }
+@keyframes paper-out{
+  0%{filter:none; opacity:1; transform:translateY(0) scale(1);}
+  60%{filter:blur(2px); opacity:.6;}
+  100%{filter:blur(8px); opacity:0; transform:translateY(10px) scale(.98);}
+}
+
+/* ===== 流动背景（Aurora · Ocean，位移版，抗闪烁） ===== */
+.liquid-bg{
+  position:fixed; inset:0; z-index:-1; background:#000; overflow:hidden;
+  isolation:isolate; contain:paint; transform: translateZ(0);
+}
+.liquid-bg::before,
+.liquid-bg::after{
+  content:""; position:absolute; inset:-20%;
+  background-size:200% 200%; will-change: transform, opacity; transform: translateZ(0);
+}
+.liquid-bg::before{
+  background-image: linear-gradient(-60deg, var(--c1) 0%, transparent 40%, var(--c2) 60%, transparent 85%);
+  filter: blur(60px) saturate(120%); opacity:.75;
+  animation: auroraX 18s ease-in-out infinite alternate;
+}
+.liquid-bg::after{
+  background-image: linear-gradient(60deg, var(--c4) 0%, transparent 45%, var(--c3) 70%, transparent 90%);
+  filter: blur(70px) saturate(130%); opacity:.65;
+  animation: auroraY 26s ease-in-out infinite alternate;
+}
+/* 轻噪点层，soft-light 更稳 */
+.liquid-bg i{
+  position:absolute; inset:0; pointer-events:none;
+  background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAQAAABx0wDUAAAAL0lEQVR42u3BMQEAAADCIPunf2FQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4C8wAAa3Q7LwAAAAAASUVORK5CYII=');
+  opacity:.04; mix-blend-mode: soft-light;
+}
+@keyframes auroraX{ from { transform: translate3d(-25%, 0, 0); } to { transform: translate3d(25%, 0, 0);} }
+@keyframes auroraY{ from { transform: translate3d(0, -12%, 0); } to { transform: translate3d(0, 12%, 0);} }
+
+/* 小提示 */
+.hint{ margin:10px 0 0; font-size:12px; color:var(--muted); }
+
+/* 提升前景合成稳定性 */
+.date-card, .subject{ -webkit-backface-visibility:hidden; backface-visibility:hidden; }
