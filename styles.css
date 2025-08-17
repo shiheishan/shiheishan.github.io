@@ -14,6 +14,7 @@
   --ink: var(--text);
   --move-dur:380ms;
   --move-ease:cubic-bezier(.22,.61,.36,1);
+  --fade-dur:220ms;
 }
 
 @media (prefers-color-scheme: dark){
@@ -28,7 +29,7 @@
 }
 
 @media (prefers-reduced-motion: reduce){
-  :root{ --move-dur:0ms; }
+  :root{ --move-dur:0ms; --fade-dur:0ms; }
 }
 
 *{ box-sizing:border-box; }
@@ -90,7 +91,7 @@ body{
   border:1px solid var(--border); border-radius:18px;
   box-shadow: 0 6px 16px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.4);
   padding:14px 16px; margin-bottom:14px;
-  transition: transform var(--move-dur) var(--move-ease), opacity var(--move-dur) var(--move-ease);
+  transition: transform var(--move-dur) var(--move-ease), opacity var(--fade-dur) ease-out;
   will-change: transform;
 }
 .subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
