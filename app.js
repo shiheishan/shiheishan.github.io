@@ -23,6 +23,7 @@ const RADIUS = 40;
 const CIRCUM = 2 * Math.PI * RADIUS;
 let seqCounter = 0;
 let resortTimer = null;
+let prevPct = 0;
 
 function render(){
   const frag = document.createDocumentFragment();
@@ -130,25 +131,54 @@ function resortWithFLIP(items, container){
       const duration = parseFloat(rootStyle.getPropertyValue('--move-dur'));
       const easing = rootStyle.getPropertyValue('--move-ease').trim() || 'ease';
       let active = motions.length;
-      container.classList.add('reordering');
-      motions.forEach(({el, dx, dy}) => {
-        el._flipAnim = el.animate(
-          [
-            { transform: `translate(${dx}px,${dy}px)` },
-            { transform: 'translate(0,0)' }
-          ],
-          { duration, easing, fill: 'both' }
-        );
-        const clear = () => {
-          el.style.transform = '';
-          el._flipAnim = null;
-          if(--active === 0) container.classList.remove('reordering');
-        };
-        el._flipAnim.addEventListener('finish', clear, { once: true });
-        el._flipAnim.addEventListener('cancel', clear, { once: true });
-      });
+        container.classList.add('reordering');
+        motions.forEach(({el, dx, dy}, i) => {
+          const delay = reduce ? 0 : Math.min(i * 16, 96);
+          el._flipAnim = el.animate(
+            [
+              { transform: `translate(${dx}px,${dy}px)` },
+              { transform: 'translate(0,0)' }
+            ],
+            { duration, easing, fill: 'both', delay }
+          );
+          const clear = () => {
+            el.style.transform = '';
+            el._flipAnim = null;
+            if(--active === 0) container.classList.remove('reordering');
+          };
+          el._flipAnim.addEventListener('finish', clear, { once: true });
+          el._flipAnim.addEventListener('cancel', clear, { once: true });
+        });
     });
   });
+}
+
+function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+
+function animateNumber(el, from, to, opts = {}){
+  const dur = opts.duration ?? 700;
+  const ease = opts.easing ?? easeOutCubic;
+  let start = null;
+  let raf = null;
+  if(el._numCancel){ el._numCancel(); }
+  function step(ts){
+    if(start === null) start = ts;
+    const p = Math.min(1, (ts - start) / dur);
+    const v = Math.round(from + (to - from) * ease(p));
+    el.textContent = v + '%';
+    if(p < 1){
+      raf = requestAnimationFrame(step);
+    }else{
+      el._numCancel = null;
+    }
+  }
+  el._numCancel = () => { if(raf) cancelAnimationFrame(raf); el._numCancel = null; };
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    el.textContent = Math.round(to) + '%';
+    el._numCancel = null;
+    return;
+  }
+  raf = requestAnimationFrame(step);
 }
 
 function updateProgress(){
@@ -157,16 +187,32 @@ function updateProgress(){
   const done = inputs.filter(i=>i.checked).length;
   const pct = total ? Math.round(done/total*100) : 100;
 
+  const rootStyle = getComputedStyle(document.documentElement);
+  const dDur = parseFloat(rootStyle.getPropertyValue('--donut-dur'));
+  const dEase = rootStyle.getPropertyValue('--donut-ease').trim() || 'ease';
+
   if(ring){
     ring.style.strokeDasharray = CIRCUM;
     ring.style.strokeDashoffset = (1 - pct/100) * CIRCUM;
   }
   if(pctText){
-    pctText.textContent = pct + '%';
+    animateNumber(pctText, prevPct, pct, { duration: dDur });
+    if(dDur > 0){
+      pctText._fadeAnim?.cancel();
+      pctText._fadeAnim = pctText.animate(
+        [
+          { opacity: 0.7, transform: 'translateY(2px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        { duration: dDur, easing: dEase }
+      );
+    }
   }
   if(donut){
     donut.setAttribute('aria-label', `整体完成度 ${pct}%`);
   }
+
+  prevPct = pct;
 
   if(done === total && total > 0){
     celebrateAndVanish();
