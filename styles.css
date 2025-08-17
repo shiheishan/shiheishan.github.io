@@ -12,8 +12,10 @@
   --gap:16px;
   --maxw:480px;
   --ink: var(--text);
-  --move-dur:420ms;
-  --move-ease:cubic-bezier(.22,.61,.36,1);
+  --move-dur:560ms;
+  --move-ease:cubic-bezier(.20,.70,.20,1);
+  --donut-dur:700ms;
+  --donut-ease:cubic-bezier(.20,.70,.20,1);
   --fade-dur:220ms;
 }
 
@@ -29,7 +31,7 @@
 }
 
 @media (prefers-reduced-motion: reduce){
-  :root{ --move-dur:0ms; --fade-dur:0ms; }
+  :root{ --move-dur:0ms; --fade-dur:0ms; --donut-dur:0ms; }
 }
 
 *{ box-sizing:border-box; }
@@ -72,7 +74,7 @@ body{
 .donut circle{ fill:none; stroke-width:12; }
 .donut .track{ stroke:#e5e5ea; }
 .donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg);
-               transition:stroke-dashoffset 200ms ease-out; }
+               transition:stroke-dashoffset var(--donut-dur) var(--donut-ease); }
 @media (prefers-reduced-motion: reduce){
   .donut .ring{ transition:none; }
 }
