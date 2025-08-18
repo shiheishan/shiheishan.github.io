@@ -108,3 +108,51 @@
 }
 #progress-ring .hw-ring-label{ position:absolute; font-weight:700; font-size:18px; }
 /* stylelint-enable no-descending-specificity */
+
+/* —— 时间卡片（与现有卡片风格一致） —— */
+#clock-root { padding: 0 8px; }
+.clock-card {
+  background:#fff; border-radius:16px; padding:12px 16px; margin:12px 12px 2px;
+  box-shadow:0 6px 20px rgba(0,0,0,.08); text-align:center; font-weight:700; color:#1d1d1f;
+}
+
+/* —— Homework namespace（强化选择器，避免被旧样式覆盖） —— */
+#homework-root { padding: 0 8px 110px; }
+#homework-root .hw-card  { background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:16px 12px; }
+#homework-root .hw-title { margin:0 0 8px; font-size:20px; font-weight:700; color:#1d1d1f; }
+#homework-root .hw-list  { margin:0; padding:0; list-style:none; }
+#homework-root .hw-item  { display:flex; align-items:flex-start; gap:12px; margin:10px 0; will-change:transform; transition:transform 260ms cubic-bezier(.22,.61,.36,1); }
+#homework-root .hw-text  { position:relative; color:#1d1d1f; }
+
+:root{ --hw-size:22px; --hw-done:#22c55e; --hw-border:#d2d2d7; --hw-strike:rgba(0,0,0,.55); }
+#homework-root .hw-check{
+  appearance:none; -webkit-appearance:none; padding:0; margin-top:2px;
+  width:var(--hw-size); height:var(--hw-size); aspect-ratio:1/1;
+  border-radius:999px; border:2px solid var(--hw-border); background:#fff;
+  display:inline-grid; place-items:center; box-sizing:border-box; line-height:0; cursor:pointer;
+  transition:border-color 160ms cubic-bezier(.22,.61,.36,1), background-color 160ms cubic-bezier(.22,.61,.36,1);
+}
+#homework-root .hw-check::after{
+  content:""; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff;
+  transform:rotate(-45deg) scale(0); transform-origin:left bottom; transition:transform 160ms cubic-bezier(.22,.61,.36,1);
+}
+#homework-root .hw-item.hw-done .hw-check{ background:var(--hw-done); border-color:var(--hw-done); }
+#homework-root .hw-item.hw-done .hw-check::after{ transform:rotate(-45deg) scale(1); }
+
+/* —— 删除线动画（提高优先级，防丢失） —— */
+#homework-root .hw-text::after{
+  content:""; position:absolute; left:0; right:0; top:0.9em; height:1px; background:var(--hw-strike);
+  transform:scaleX(0); transform-origin:left; transition:transform 260ms cubic-bezier(.22,.61,.36,1);
+}
+#homework-root .hw-item.hw-done .hw-text{ color:var(--hw-strike); }
+#homework-root .hw-item.hw-done .hw-text::after{ transform:scaleX(1); }
+
+/* —— 甜甜圈示图（兜底样式） —— */
+#progress-ring{ width:96px;height:96px; display:grid; place-items:center; }
+#progress-ring .hw-ring{
+  width:96px;height:96px;border-radius:50%;
+  background:conic-gradient(#e5e7eb 0deg,#e5e7eb 360deg);
+  -webkit-mask:radial-gradient(farthest-side,#0000 68%,#000 70%);
+          mask:radial-gradient(farthest-side,#0000 68%,#000 70%);
+}
+#progress-ring .hw-ring-label{ position:absolute; font-weight:700; font-size:18px; }
