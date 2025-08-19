@@ -108,6 +108,19 @@
 }
 #progress-ring .hw-ring-label{ position:absolute; font-weight:700; font-size:18px; }
 
+/* —— 取消内层滚动，仅保留页面滚动 —— */
+#subjects, .panel__body { max-height: none; overflow: visible; -webkit-overflow-scrolling: auto; }
+
+/* —— 任务项可点区域（label 包裹）—— */
+.task { list-style: none; }
+.task__label { display: flex; align-items: center; gap: .75rem; cursor: pointer; user-select: none; }
+.task__input { position: absolute; opacity: 0; width: 0; height: 0; }
+.task__box { width: 22px; height: 22px; border: 2px solid var(--border, #d2d2d7); border-radius: 50%; display: inline-block; position: relative; transition: border-color .2s, background .2s; flex: 0 0 22px; }
+.task__input:checked + .task__box { background: var(--checked-color, #28a745); border-color: var(--checked-color, #28a745); }
+.task__input:checked + .task__box::after { content: ""; position: absolute; left: 6px; top: 2px; width: 6px; height: 12px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.task__text { color: var(--text, #1d1d1f); transition: color .2s, text-decoration-color .2s; }
+.task__input:checked + .task__box + .task__text { color: var(--muted-text, #6e6e73); text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: rgba(0,0,0,.35); }
+
 /* —— 时间卡片 —— */
 .time-card{
   background:#fff; border-radius:16px; padding:12px 16px; margin:12px auto 2px;
@@ -171,3 +184,15 @@
           mask:radial-gradient(farthest-side,#0000 68%,#000 70%);
 }
 #progress-ring .hw-ring-label{ position:absolute; font-weight:700; font-size:18px; }
+/* —— 取消内层滚动，仅保留页面滚动 —— */
+#subjects, .panel__body { max-height: none; overflow: visible; -webkit-overflow-scrolling: auto; }
+
+/* —— 任务项可点区域（label 包裹）—— */
+.task { list-style: none; }
+.task__label { display: flex; align-items: center; gap: .75rem; cursor: pointer; user-select: none; }
+.task__input { position: absolute; opacity: 0; width: 0; height: 0; }
+.task__box { width: 22px; height: 22px; border: 2px solid var(--border, #d2d2d7); border-radius: 50%; display: inline-block; position: relative; transition: border-color .2s, background .2s; flex: 0 0 22px; }
+.task__input:checked + .task__box { background: var(--checked-color, #28a745); border-color: var(--checked-color, #28a745); }
+.task__input:checked + .task__box::after { content: ""; position: absolute; left: 6px; top: 2px; width: 6px; height: 12px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.task__text { color: var(--text, #1d1d1f); transition: color .2s, text-decoration-color .2s; }
+.task__input:checked + .task__box + .task__text { color: var(--muted-text, #6e6e73); text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: rgba(0,0,0,.35); }
