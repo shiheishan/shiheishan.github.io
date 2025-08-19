@@ -1,55 +1,42 @@
-const RADIUS = 40;
-const CIRCUM = 2 * Math.PI * RADIUS;
+import { render, updateCompletion } from './render.js';
+import { debounce } from '../utils/dom.js';
+import { flipReorder, animateAutoHeight } from '/scripts/flip.js';
+import { state, getState, setState, addSubject as add, removeSubject as remove, updateTask } from './state.js';
+import { sortByCompleteThenSeq } from './sort.js';
+import { selectProgress } from './state.js';
 
-function animateNumber(el, from, to, dur) {
-  let start = null;
-  let raf = null;
-  if (el._numCancel) el._numCancel();
-  function step(ts) {
-    if (start === null) start = ts;
-    const p = Math.min(1, (ts - start) / dur);
-    const eased = 1 - Math.pow(1 - p, 3);
-    const v = Math.round(from + (to - from) * eased);
-    el.textContent = v + '%';
-    if (p < 1) {
-      raf = requestAnimationFrame(step);
-    } else {
-      el._numCancel = null;
+export function initHwPanel({ mount, onProgress }) {
+  render(mount, state);
+  updateCompletion(mount, state);
+  onProgress(selectProgress());
+  const debounced = debounce(() => {
+    animateAutoHeight(mount, 180);
+    flipReorder(mount, '.card', () => {
+      const items = Array.from(mount.children).sort(sortByCompleteThenSeq);
+      items.forEach(el => mount.appendChild(el));
+    }, { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)', stagger: 24 });
+  }, 100);
+  mount.addEventListener('change', e => {
+    const input = e.target;
+    if (input && input.matches('input[type="checkbox"]')) {
+      const card = input.closest('.subject');
+      const subj = state.find(s => s.id === card.dataset.id);
+      const task = subj.tasks.find(t => t.id === input.dataset.tid);
+      task.done = input.checked;
+      updateCompletion(mount, state);
+      debounced();
+      onProgress(selectProgress());
     }
-  }
-  el._numCancel = () => { if (raf) cancelAnimationFrame(raf); el._numCancel = null; };
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || dur === 0) {
-    el.textContent = Math.round(to) + '%';
-    el._numCancel = null;
-    return;
-  }
-  raf = requestAnimationFrame(step);
+  });
+  return { addSubject, removeSubject, updateTask, getState, setState };
 }
 
-export function initDonut({ ring, text, donut }) {
-  let prev = 0;
-  function update(pct) {
-    const root = getComputedStyle(document.documentElement);
-    const dDur = parseFloat(root.getPropertyValue('--donut-dur')) || 0;
-    const dEase = root.getPropertyValue('--donut-ease').trim() || 'ease';
-    if (ring) {
-      ring.style.strokeDasharray = CIRCUM;
-      ring.style.strokeDashoffset = (1 - pct / 100) * CIRCUM;
-    }
-    if (text) {
-      animateNumber(text, prev, pct, dDur);
-      if (dDur > 0 && text.animate) {
-        text._fadeAnim?.cancel();
-        text._fadeAnim = text.animate(
-          [{ opacity: 0.7, transform: 'translateY(2px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: dDur, easing: dEase }
-        );
-      }
-    }
-    if (donut) {
-      donut.setAttribute('aria-valuenow', pct);
-    }
-    prev = pct;
-  }
-  return { update };
+function addSubject(subject) {
+  add(subject);
 }
+
+function removeSubject(id) {
+  remove(id);
+}
+
+export { updateTask, getState, setState };
