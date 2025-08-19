@@ -4,15 +4,13 @@
   const CSV_URL = `/data/homework.csv?ts=${Date.now()}`;
   const LS_KEY  = 'hw:done:v1';
   let prevPct = 0;
+  const RADIUS = 45;
+  const CIRCUM = 2 * Math.PI * RADIUS;
 
   // —— 工具
   function byId(id){ return document.getElementById(id); }
   // eslint-disable-next-line no-unused-vars
   function ensure(el, tag='div'){ return el || document.createElement(tag); }
-  function format(ts=new Date()){
-    const d = ts;
-    return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-  }
   function animateNumber(el, from, to, ms=380){
     const t0 = performance.now();
     const tick = (now)=>{
@@ -24,12 +22,14 @@
     requestAnimationFrame(tick);
   }
   function animateRing(fromPct, toPct, ms=380){
-    const ring = ensureRing().querySelector('.hw-ring');
+    const bar = byId('pctBar');
+    if (!bar) return;
     const t0 = performance.now();
     const tick = (now)=>{
       const p = Math.min(1,(now-t0)/ms);
-      const deg = (fromPct + (toPct-fromPct)*p) * 3.6;
-      ring.style.background = `conic-gradient(#22c55e ${deg}deg, #e5e7eb 0deg)`;
+      const cur = fromPct + (toPct-fromPct)*p;
+      bar.style.strokeDasharray = CIRCUM;
+      bar.style.strokeDashoffset = (1 - cur/100) * CIRCUM;
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -66,36 +66,21 @@
 
   // —— 时间卡片
   function ensureClock(){
-    let host = byId('clock-root');
-    if (!host){
-      host = document.createElement('div');
-      host.id = 'clock-root';
-      (document.querySelector('main')||document.body).prepend(host);
-    }
-    host.innerHTML = `<div class="clock-card" id="clock-card"></div>`;
-    const card = byId('clock-card');
-    const tick = () => { card.textContent = format(new Date()); };
+    const timeEl = byId('time');
+    const dateEl = byId('date');
+    if (!timeEl || !dateEl) return;
+    const tick = () => {
+      const d = new Date();
+      timeEl.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+      dateEl.textContent = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+    };
     tick();
     clearInterval(window.__HW_CLOCK_TMR__);
     window.__HW_CLOCK_TMR__ = setInterval(tick, 1000);
   }
-
-  // —— 进度环
-  function ensureRing(){
-    let ring = document.querySelector('[data-role="progress-ring"]') || document.querySelector('#progress-ring');
-    if(!ring){
-      ring = document.createElement('div');
-      ring.id='progress-ring'; ring.setAttribute('data-role','progress-ring');
-      ring.innerHTML = `<div class="hw-ring"></div><div class="hw-ring-label" data-role="progress-label">0%</div>`;
-    }
-    document.body.appendChild(ring);
-    Object.assign(ring.style,{position:'fixed',left:'50%',bottom:'24px',transform:'translateX(-50%)',zIndex:'999'});
-    return ring;
-  }
   function updateProgress(total, checked){
     const pct = total ? Math.round(checked/total*100) : 0;
-    const ring = ensureRing();
-    const label = ring.querySelector('[data-role="progress-label"]') || ring;
+    const label = byId('pctText');
     animateNumber(label, prevPct, pct, 380);
     animateRing(prevPct, pct, 380);
     prevPct = pct;
@@ -123,9 +108,8 @@
 
   // —— 视图渲染
   function ensureRoot(){
-    let root = document.querySelector('#homework-root');
+    let root = byId('homework-root');
     if(!root){ root = document.createElement('div'); root.id='homework-root'; (document.querySelector('main')||document.body).appendChild(root); }
-    const legacy = document.querySelector('#subjects-root'); if (legacy && legacy!==root) legacy.style.display='none';
     return root;
   }
 
