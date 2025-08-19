@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>学习清单</title>
+  <!-- 旧样式若还在，可保留；关键是把 fix-v3.css 放在最后覆盖 -->
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/hw-panel.css" />
+  <link rel="stylesheet" href="/css/donut.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/fix-v3.css" />
+</head>
+<body>
+  <main class="app" id="app">
+    <!-- 唯一的时间条 -->
+    <section class="card time-card" aria-live="polite">
+      <div class="time" id="time">--:--:--</div>
+      <div class="date" id="date"></div>
+    </section>
+
+    <!-- 学科列表根节点（脚本渲染） -->
+    <section id="subjects">
+      <div class="card" id="subjects-root"></div>
+    </section>
+
+    <!-- 唯一的圆环进度 -->
+    <figure class="donut" id="progress">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="45" class="bg" />
+        <circle cx="50" cy="50" r="45" class="fg" id="pctBar" />
+      </svg>
+      <figcaption id="pctText" aria-live="polite">0%</figcaption>
+    </figure>
+  </main>
+
+  <script src="/scripts/flip.js" defer></script>
+  <script type="module" src="/src/app.js"></script>
+  <script src="/scripts/homework.js"></script>
+</body>
+</html>
