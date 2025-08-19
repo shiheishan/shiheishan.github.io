@@ -1,0 +1,195 @@
+html {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--label);
+  line-height: 1.5;
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--label);
+}
+
+* { box-sizing: border-box; }
+
+a { color: var(--tint); }
+
+button,
+input,
+select,
+textarea,
+a,
+.cell {
+  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--label);
+  background: var(--fill);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+
+button:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  background: color-mix(in srgb, var(--fill) 80%, var(--tint));
+}
+
+button:active,
+input:active,
+select:active,
+textarea:active,
+a:active {
+  transform: scale(0.98);
+}
+button:active {
+  transform: scale(0.98);
+  transition: transform var(--dur-fast) var(--ease-emphasized);
+}
+
+:focus-visible {
+  outline: 2px solid var(--tint);
+  outline-offset: 2px;
+}
+
+hr {
+  height: 1px;
+  border: 0;
+  background: var(--separator);
+  margin: 0;
+}
+
+.glass {
+  background: color-mix(in oklab, var(--surface) 60%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--separator);
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* 布局与比例（容器与卡片） */
+.main, .container, body > .wrap {
+  max-width: 520px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+.card {
+  border-radius: var(--radius-lg, 16px);
+  background: var(--surface, #fff);
+  box-shadow: var(--shadow-1);
+  padding: 16px;
+}
+
+/* 列表单元 iOS 行高与分割线 */
+.list { margin: 0; padding: 0; }
+.cell {
+  min-height: 52px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--separator);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cell:active { transform: scale(0.98); }
+
+/* 任务行：用网格/弹性保证基线对齐与触控面积 */
+.task {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  column-gap: 12px;
+  min-height: 44px;            /* 命中区 */
+}
+.task .checkbox{
+  width: 22px; height: 22px;
+  border: 2px solid var(--separator);
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--surface);
+  transition: border-color var(--dur-med) var(--ease-standard), background-color var(--dur-med) var(--ease-standard), transform 100ms var(--ease-standard);
+}
+.task .checkbox::after{
+  content: "";
+  width: 10px; height: 6px;
+  border: 2px solid #fff;          /* 白色对勾 */
+  border-top: 0; border-left: 0;
+  transform: rotate(45deg) scale(0.8);
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease-standard), transform var(--dur-med) var(--ease-standard);
+}
+.task:active .checkbox{ transform: scale(.96); }
+
+/* 文本与删除线：伪元素常驻 + scaleX，选择器用通用同级 ~ */
+.task .text{
+  position: relative;
+  display: inline-block;
+  font-size: 17px;
+  line-height: 1.47;
+  transition: color var(--dur-med) var(--ease-standard);
+}
+.task .text::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 0.6em; height: 1px;
+  background: var(--strike-color, rgba(0,0,0,.5));
+  transform-origin: left center;
+  transform: scaleX(0) translateZ(0);
+  transition: transform var(--dur-med) var(--ease-standard);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* 选中态（稳健选择器，不依赖相邻兄弟） */
+.task input[type="checkbox"]:checked ~ .checkbox{
+  background: var(--tint);
+  border-color: var(--tint);
+}
+.task input[type="checkbox"]:checked ~ .checkbox::after{
+  opacity: 1; transform: rotate(45deg) scale(1);
+}
+.task input[type="checkbox"]:checked ~ .text{
+  color: var(--secondary-label);
+}
+.task input[type="checkbox"]:checked ~ .text::after{
+  transform: scaleX(1) translateZ(0);
+}
+
+/* 大标题与分组标题（iOS 20/17 体系） */
+.section-title{ font-size: 20px; line-height: 1.2; font-weight: 600; margin: 8px 0 6px; }
+.subtle{ font-size: 15px; line-height: 1.4; color: var(--tertiary-label); }
+
+/* 减少动效 */
+@media (prefers-reduced-motion: reduce){
+  .task .text, .task .text::after, .task .checkbox, .task .checkbox::after{ transition: none; }
+}
+
+/* 暗色微调（复选框边框、删除线） */
+@media (prefers-color-scheme: dark){
+  .task .checkbox{ border-color: var(--separator); background: var(--surface); }
+  .task .text::after{ background: color-mix(in srgb, var(--label) 55%, transparent); }
+}
