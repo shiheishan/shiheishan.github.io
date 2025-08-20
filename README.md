@@ -16,5 +16,6 @@ src/            # 源码：入口、作业板块、甜甜圈、工具等
 ```
 
 ## 二次开发
+作业数据位于 `src/hw-panel/data.js`，可直接编辑以调整内容。
 修改 `src/hw-panel/*` 可独立定制作业 UI 与交互；入口逻辑位于 `src/app.js`。
 使用 `npm run lint` 可运行 ESLint 与 Stylelint。
