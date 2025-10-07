@@ -7,15 +7,19 @@
 
 ## 目录结构
 ```
-css/            # 样式：base/layout/hw-panel/donut
-src/            # 源码：入口、作业板块、甜甜圈、工具等
-└─ hw-panel/    # 作业板块模块
-└─ donut/       # 甜甜圈进度模块
-└─ anim/        # FLIP 动画
-└─ utils/       # DOM 与防抖工具
+assets/
+  └─ styles/                  # 主题变量、基础布局与组件样式
+src/
+  ├─ main.js                  # 入口，加载核心应用
+  ├─ core/                    # 应用装配与页面级逻辑
+  ├─ modules/clock/           # 时间显示模块
+  ├─ modules/progress/        # 甜甜圈进度组件
+  ├─ modules/homework/        # 作业面板（数据/状态/渲染/排序）
+  ├─ animations/              # 通用动画辅助
+  └─ shared/                  # 共享工具（DOM 助手、防抖）
 ```
 
 ## 二次开发
-作业数据位于 `src/hw-panel/data.js`，可直接编辑以调整内容。
-修改 `src/hw-panel/*` 可独立定制作业 UI 与交互；入口逻辑位于 `src/app.js`。
+作业数据位于 `src/modules/homework/data.js`，可直接编辑以调整内容。
+修改 `src/modules/homework/*` 可独立定制作业 UI 与交互；入口逻辑位于 `src/core/app.js`。
 使用 `npm run lint` 可运行 ESLint 与 Stylelint。
