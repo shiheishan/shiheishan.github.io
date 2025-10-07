@@ -17,12 +17,40 @@ export function initHwPanel({ mount, onProgress }) {
   updateCompletion(mount, state);
   onProgress(selectProgress());
 
+  const blurEl = mount.closest('.panel')?.querySelector('.panel__blur');
+  let blurRaf = 0;
+
+  const syncBlur = () => {
+    if (!blurEl) return;
+    if (blurRaf) cancelAnimationFrame(blurRaf);
+    blurRaf = requestAnimationFrame(() => {
+      blurRaf = 0;
+      const { scrollTop, scrollHeight, clientHeight } = mount;
+      const overflow = scrollHeight - clientHeight > 2;
+      if (!overflow) {
+        blurEl.dataset.state = 'hidden';
+        blurEl.style.removeProperty('--blur-progress');
+        return;
+      }
+      const remaining = scrollHeight - clientHeight - scrollTop;
+      const ratio = Math.max(0, Math.min(1, remaining / 120));
+      if (ratio <= 0.01) {
+        blurEl.dataset.state = 'hidden';
+        blurEl.style.removeProperty('--blur-progress');
+      } else {
+        blurEl.dataset.state = 'visible';
+        blurEl.style.setProperty('--blur-progress', ratio.toFixed(3));
+      }
+    });
+  };
+
   const debounced = debounce(() => {
     animateAutoHeight(mount, 180);
     flipReorder(mount, '.card', () => {
       const items = Array.from(mount.children).sort(sortByCompleteThenSeq);
       items.forEach(el => mount.appendChild(el));
     }, { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)', stagger: 24 });
+    syncBlur();
   }, 100);
 
   mount.addEventListener('change', e => {
@@ -35,8 +63,15 @@ export function initHwPanel({ mount, onProgress }) {
       updateCompletion(mount, state);
       debounced();
       onProgress(selectProgress());
+      syncBlur();
     }
   });
+
+  if (blurEl) {
+    mount.addEventListener('scroll', syncBlur, { passive: true });
+    window.addEventListener('resize', syncBlur);
+    syncBlur();
+  }
 
   return { addSubject, removeSubject, updateTask, getState, setState };
 }
