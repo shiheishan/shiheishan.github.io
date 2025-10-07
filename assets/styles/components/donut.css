@@ -1,6 +1,6 @@
 .donut{ position:fixed; left:50%; transform:translateX(-50%);
         bottom:calc(16px + env(safe-area-inset-bottom)); width:92px; height:92px;
-        display:grid; place-items:center; }
+        display:grid; place-items:center; z-index:10; }
 .donut svg, .donut figcaption{ grid-area:1/1; }
 .donut circle{ fill:none; stroke-width:12; }
 .donut .track{ stroke:#e5e5ea; }
