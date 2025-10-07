@@ -1,4 +1,4 @@
-import { qsa } from '../utils/dom.js';
+import { qsa } from '../../shared/dom.js';
 
 export function render(mount, state) {
   mount.innerHTML = '';

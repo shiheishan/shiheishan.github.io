@@ -1,6 +1,6 @@
-import './clock.js';
-import { initHwPanel } from './hw-panel/index.js';
-import { initDonut } from './donut/index.js';
+import '../modules/clock/index.js';
+import { initHwPanel } from '../modules/homework/index.js';
+import { initDonut } from '../modules/progress/index.js';
 
 const app = document.getElementById('app');
 const ionCanvas = document.getElementById('ion-canvas');
