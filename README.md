@@ -12,12 +12,12 @@ python3 -m http.server 8000
 ## 目录结构
 ```
 assets/
-  └─ styles/                  # 主题变量、基础布局与组件样式
+  └─ styles/                  # 纸张风主题变量、报头布局、作业列表与完成弹窗样式
 src/
   ├─ main.js                  # 入口，加载核心应用
   ├─ core/                    # 应用装配与页面级逻辑
-  ├─ modules/clock/           # 时间显示模块
-  ├─ modules/progress/        # 甜甜圈进度组件
+  ├─ modules/clock/           # 报头日期与时间
+  ├─ modules/progress/        # 完成计数、摘要与分段进度条
   ├─ modules/homework/        # 作业面板（数据/状态/渲染/排序）
   ├─ animations/              # 通用动画辅助
   └─ shared/                  # 共享工具（DOM 助手、防抖）

@@ -1,29 +1,25 @@
+// FLIP：记录变更前位置，执行 DOM 变更后从旧位置纵向滑到新位置
 export function flipReorder(container, itemSelector, mutateDOM, {
-  duration = 300,
+  duration = 440,
   easing = 'cubic-bezier(.2,.8,.2,1)',
-  stagger = 0
+  stagger = 20
 } = {}) {
-  const items = Array.from(container.querySelectorAll(itemSelector));
-  if (!items.length) return;
-
-  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const first = new Map(items.map(el => [el, el.getBoundingClientRect()]));
+  const first = new Map(
+    Array.from(container.querySelectorAll(itemSelector), el => [el, el.getBoundingClientRect().top])
+  );
 
   mutateDOM();
 
-  const last = new Map(items.map(el => [el, el.getBoundingClientRect()]));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  if (reduce) return;
-
-  items.forEach((el, i) => {
-    const f = first.get(el), l = last.get(el);
-    if (!f || !l) return;
-    const dx = f.left - l.left, dy = f.top - l.top;
-    if (dx || dy) {
-      el.animate(
-        [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0,0)' }],
-        { duration, easing, fill: 'both', delay: i * stagger }
-      );
-    }
+  container.querySelectorAll(itemSelector).forEach((el, i) => {
+    const f = first.get(el);
+    if (f == null) return;
+    const dy = f - el.getBoundingClientRect().top;
+    if (Math.abs(dy) < 1) return;
+    el.animate(
+      [{ transform: `translateY(${dy}px)` }, { transform: 'none' }],
+      { duration, easing, delay: i * stagger, fill: 'backwards' }
+    );
   });
 }

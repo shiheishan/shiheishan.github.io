@@ -1,22 +1,16 @@
-:root{
-  --radius:16px;
-  --shadow:0 6px 16px rgba(0,0,0,.06);
-  --gap:16px;
-  --maxw:520px;
-  --move-dur:640ms;
-  --move-ease:cubic-bezier(.20,.70,.20,1);
-  --donut-dur:700ms;
-  --donut-ease:cubic-bezier(.20,.70,.20,1);
-  --fade-dur:220ms;
-}
-@media (prefers-reduced-motion: reduce){
-  :root{ --move-dur:0ms; --fade-dur:0ms; --donut-dur:0ms; }
-}
 *{ box-sizing:border-box; }
-html, body{ height:100%; }
+html{ color-scheme:light; }
+html, body{ margin:0; background:var(--paper); color:var(--ink); }
 body{
-  margin:0; color:var(--label);
-  font:16px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,"Helvetica Neue",Segoe UI,Arial;
-  background: var(--bg);
-  overflow-x:hidden;
+  font:16px/1.5 var(--font-sans);
+  -webkit-font-smoothing:antialiased;
+  min-height:100dvh;
+}
+button{ font:inherit; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation:none !important;
+    transition:none !important;
+  }
 }

@@ -10,5 +10,5 @@ export const state = subjects.map((s, i) => ({
 export function selectProgress() {
   const total = state.reduce((sum, s) => sum + s.tasks.length, 0);
   const done = state.reduce((sum, s) => sum + s.tasks.filter(t => t.done).length, 0);
-  return total ? Math.round((done / total) * 100) : 100;
+  return { done, total, pct: total ? Math.round((done / total) * 100) : 100 };
 }

@@ -1,103 +1,59 @@
+/* 学科：左栏科目名 + 进度，右栏作业列表 */
 .subject{
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
-  padding: 16px; margin-bottom: 14px;
-  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
-  will-change: transform;
+  display:grid; grid-template-columns:76px minmax(0,1fr); column-gap:12px;
+  border-top:1.5px solid var(--ink); padding:14px 0 10px;
 }
-.subject-title{ font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: .2px; margin: 8px 0 6px; }
-.tasks{ margin: 0; padding: 0; list-style: none; }
+.subject__head{ display:flex; flex-direction:column; gap:4px; padding-top:6px; }
+.subject__name{
+  margin:0; font-family:var(--font-serif);
+  font-size:24px; line-height:1.2; font-weight:700; letter-spacing:.06em;
+  color:var(--ink); transition:color 220ms;
+}
+.subject__meta{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; font-variant-numeric:tabular-nums;
+  color:var(--ink-50); transition:color 220ms;
+}
+.subject[data-complete="true"] .subject__name{ color:var(--ink-50); }
+.subject[data-complete="true"] .subject__meta{ color:var(--accent); }
+.tasks{ display:flex; flex-direction:column; margin:0; padding:0; list-style:none; }
 
-/* 任务行：网格保证对齐与 44px 触控面积 */
+/* 作业行 */
 .task{
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  align-items: center;
-  column-gap: 12px;
-  min-height: 44px;
-  padding: 10px 6px;
-  border-radius: 12px;
-  position: relative;
+  position:relative; display:flex; align-items:center; gap:14px;
+  min-height:50px; padding:12px 4px;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
 }
-.task:hover{ background: linear-gradient(180deg, color-mix(in srgb, var(--label) 4%, transparent), transparent); }
-.task input{ position: absolute; opacity: 0; pointer-events: none; }
+.tasks > li + li .task::before{
+  content:""; position:absolute; top:0; left:0; right:0;
+  border-top:1px dashed var(--ink-20);
+}
+.task input{ position:absolute; opacity:0; width:1px; height:1px; margin:0; pointer-events:none; }
 
-.task .checkbox{
-  width: 22px; height: 22px;
-  border: 2px solid var(--separator);
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  background: var(--surface);
-  transition: border-color var(--dur-med) var(--ease-standard), background-color var(--dur-med) var(--ease-standard), transform 100ms var(--ease-standard);
+.task__box{
+  position:relative; flex:none; width:22px; height:22px;
+  border-radius:5px; border:1.5px solid var(--ink-45);
+  transition:border-color 200ms;
 }
-.task .checkbox::after{
-  content: ""; width: 5px; height: 10px;
-  border: 2px solid #fff;
-  border-top: 0; border-left: 0;
-  transform: translateY(-1px) rotate(45deg) scale(0.8);
-  opacity: 0;
-  transition: opacity var(--dur-med) var(--ease-standard), transform var(--dur-med) var(--ease-standard);
+.task__box::after{
+  content:""; position:absolute; left:6px; top:-5px; width:9px; height:19px;
+  border:3px solid var(--accent); border-top:0; border-left:0; border-radius:0 0 2px 0;
+  transform:rotate(42deg) scale(.4); transform-origin:60% 80%; opacity:0;
+  transition:opacity 180ms, transform 260ms cubic-bezier(.3,1.5,.5,1);
 }
-.task:active .checkbox{ transform: scale(.96); }
-.task input:focus-visible ~ .checkbox{ outline: 2px solid var(--tint); outline-offset: 2px; }
-
-/* 文字：勾选时 --p 从 0 过渡到 1，渐变从左往右把文字染成次要色，与删除线同步 */
-@property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
-.task .text{
-  --p: 0;
-  position: relative;
-  display: inline-block;
-  justify-self: start;
-  font-size: 17px;
-  line-height: 1.47;
-  letter-spacing: .2px;
-  color: var(--label);
-  transition: --p var(--dur-med) var(--ease-standard), color var(--dur-med) var(--ease-standard);
+.task__text{
+  position:relative; min-width:0;
+  font-size:17px; line-height:1.45; letter-spacing:.02em;
+  color:var(--ink); transition:color 220ms; text-wrap:pretty;
 }
-@supports ((-webkit-background-clip: text) or (background-clip: text)){
-  .task .text{
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    background-image: linear-gradient(90deg,
-      var(--secondary-label) 0%,
-      var(--secondary-label) calc(var(--p) * 108% - 8%),
-      var(--label) calc(var(--p) * 108%),
-      var(--label) 100%
-    );
-  }
-}
-.task .text::after{
-  content: ""; position: absolute;
-  left: 0; right: 0;
-  top: calc(50% - 1px); height: 2px; border-radius: 1px;
-  background: var(--strike);
-  transform-origin: left center;
-  transform: scaleX(0) translateZ(0);
-  transition: transform var(--dur-med) var(--ease-standard);
-  pointer-events: none;
-  will-change: transform;
+.task__text::after{
+  content:""; position:absolute; left:-2px; right:-2px; top:calc(50% - 1px); height:2px;
+  border-radius:2px; background:var(--accent); opacity:.75;
+  transform-origin:left center; transform:scaleX(0) rotate(-.6deg);
+  transition:transform 260ms var(--ease);
 }
 
-.task input[type="checkbox"]:checked ~ .checkbox{
-  background: var(--tint);
-  border-color: var(--tint);
-}
-.task input[type="checkbox"]:checked ~ .checkbox::after{
-  opacity: 1; transform: translateY(-1px) rotate(45deg) scale(1);
-}
-.task input[type="checkbox"]:checked ~ .text{
-  --p: 1;
-  /* 仅在不支持 background-clip:text 时生效 */
-  color: var(--secondary-label);
-}
-.task input[type="checkbox"]:checked ~ .text::after{
-  transform: scaleX(1) translateZ(0);
-}
-
-@media (prefers-color-scheme: dark){
-  .task .checkbox{ border-color: color-mix(in srgb, var(--label) 28%, transparent); }
-}
+.task input:checked ~ .task__box{ border-color:var(--ink-20); }
+.task input:checked ~ .task__box::after{ opacity:1; transform:rotate(42deg) scale(1); }
+.task input:checked ~ .task__text{ color:var(--ink-50); }
+.task input:checked ~ .task__text::after{ transform:scaleX(1) rotate(-.6deg); }
+.task input:focus-visible ~ .task__box{ outline:2px solid var(--accent); outline-offset:3px; }
