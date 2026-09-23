@@ -3,7 +3,11 @@
 静态 GitHub Pages 应用，用于展示与勾选每日作业进度。
 
 ## 运行
-直接在支持 ES Modules 的浏览器中打开 `index.html` 即可。
+项目使用 ES Modules，浏览器会拦截从 `file://` 直接打开时的模块加载，需要通过本地服务访问：
+```bash
+python3 -m http.server 8000
+```
+然后打开 <http://localhost:8000>。
 
 ## 目录结构
 ```
