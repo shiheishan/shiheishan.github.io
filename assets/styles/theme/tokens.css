@@ -1,11 +1,11 @@
 :root{
+  color-scheme:light;
   /* 纸张与墨色 */
   --paper:#f7f3ec;
   --paper-glass:rgba(247,243,236,.9);
   --paper-veil:rgba(247,243,236,.72);
   --card:#fffdf8;
   --ink:#1f1c17;
-  --ink-hover:#3a352c;
   --ink-60:rgba(31,28,23,.6);
   --ink-55:rgba(31,28,23,.55);
   --ink-50:rgba(31,28,23,.5);
@@ -13,6 +13,10 @@
   --ink-20:rgba(31,28,23,.2);
   --ink-14:rgba(31,28,23,.14);
   --ink-12:rgba(31,28,23,.12);
+  --rule:#1f1c17;
+  --shadow:#1f1c17;
+  --btn-bg:#1f1c17;
+  --btn-fg:#f7f3ec;
   --accent:#2f5fd0;
 
   --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
@@ -21,4 +25,48 @@
 
   --maxw:560px;
   --ease:cubic-bezier(.2,.8,.2,1);
+}
+
+/* 深色：跟随系统；?theme=light|dark 可强制（见 index.html 里的内联脚本） */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#171512;
+    --paper-glass:rgba(23,21,18,.88);
+    --paper-veil:rgba(23,21,18,.72);
+    --card:#211e1a;
+    --ink:#cfc7b9;
+    --ink-60:rgba(207,199,185,.55);
+    --ink-55:rgba(207,199,185,.5);
+    --ink-50:rgba(207,199,185,.42);
+    --ink-45:rgba(207,199,185,.38);
+    --ink-20:rgba(207,199,185,.18);
+    --ink-14:rgba(207,199,185,.12);
+    --ink-12:rgba(207,199,185,.12);
+    --rule:rgba(207,199,185,.45);
+    --shadow:#000;
+    --btn-bg:#cfc7b9;
+    --btn-fg:#171512;
+    --accent:#5c80d6;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#171512;
+  --paper-glass:rgba(23,21,18,.88);
+  --paper-veil:rgba(23,21,18,.72);
+  --card:#211e1a;
+  --ink:#cfc7b9;
+  --ink-60:rgba(207,199,185,.55);
+  --ink-55:rgba(207,199,185,.5);
+  --ink-50:rgba(207,199,185,.42);
+  --ink-45:rgba(207,199,185,.38);
+  --ink-20:rgba(207,199,185,.18);
+  --ink-14:rgba(207,199,185,.12);
+  --ink-12:rgba(207,199,185,.12);
+  --rule:rgba(207,199,185,.45);
+  --shadow:#000;
+  --btn-bg:#cfc7b9;
+  --btn-fg:#171512;
+  --accent:#5c80d6;
 }

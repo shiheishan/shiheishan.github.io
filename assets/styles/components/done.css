@@ -13,7 +13,7 @@
   background:var(--card); border:1.5px solid var(--ink); border-radius:4px;
   padding:36px 28px 28px;
   display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;
-  box-shadow:6px 6px 0 var(--ink);
+  box-shadow:6px 6px 0 var(--shadow);
   animation:hw-rise 280ms var(--ease);
 }
 .done__stamp{
@@ -34,11 +34,11 @@
 .done__text{ margin:0; font-size:15px; color:var(--ink-60); }
 .done__close{
   margin-top:18px; width:100%; height:48px;
-  border:1.5px solid var(--ink); border-radius:4px;
-  background:var(--ink); color:var(--paper);
+  border:1.5px solid var(--btn-bg); border-radius:4px;
+  background:var(--btn-bg); color:var(--btn-fg);
   font-size:16px; font-weight:600; letter-spacing:.1em; cursor:pointer;
 }
-.done__close:hover{ background:var(--ink-hover); }
+.done__close:hover{ opacity:.88; }
 .done__close:active{ transform:translate(1px,1px); }
 .done__close:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
 

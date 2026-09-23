@@ -3,7 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    // ?theme=light|dark 强制主题，默认跟随系统
+    (function () {
+      var t = new URLSearchParams(location.search).get('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    })();
+  </script>
   <title>作业清单</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,28 +22,32 @@
   <link rel="stylesheet" href="./assets/styles/components/done.css" />
 </head>
 <body>
-  <header class="masthead">
-    <div class="masthead__meta">
-      <span id="dateMono">----.--.--</span>
-      <span id="weekTime">--- --:--</span>
-    </div>
-    <div class="masthead__main">
-      <div class="masthead__title">
-        <h1>今日作业</h1>
-        <div class="masthead__summary" id="summary"></div>
-      </div>
-      <div class="counter" id="counter" role="progressbar" aria-label="整体完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <span class="counter__num" id="doneNum"></span>
-        <span class="counter__total" id="total"></span>
-      </div>
-    </div>
-  </header>
+  <div class="shell">
+    <aside class="shell__aside">
+      <header class="masthead">
+        <div class="masthead__meta">
+          <span id="dateMono">----.--.--</span>
+          <span id="weekTime">--- --:--</span>
+        </div>
+        <div class="masthead__main">
+          <div class="masthead__title">
+            <h1>今日作业</h1>
+            <div class="masthead__summary" id="summary"></div>
+          </div>
+          <div class="counter" id="counter" role="progressbar" aria-label="整体完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span class="counter__num" id="doneNum"></span>
+            <span class="counter__total" id="total"></span>
+          </div>
+        </div>
+      </header>
 
-  <div class="ticks">
-    <div class="ticks__inner" id="ticks"></div>
+      <div class="ticks">
+        <div class="ticks__inner" id="ticks"></div>
+      </div>
+    </aside>
+
+    <main class="subjects" id="subjects"></main>
   </div>
-
-  <main class="subjects" id="subjects"></main>
 
   <div class="done" id="done" role="dialog" aria-modal="true" aria-labelledby="doneTitle" hidden>
     <div class="done__card">

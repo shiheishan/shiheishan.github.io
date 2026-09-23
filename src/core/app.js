@@ -5,7 +5,7 @@ import { initProgress } from '../modules/progress/index.js';
 
 const doneEl = document.getElementById('done');
 const doneClose = document.getElementById('doneClose');
-const pageEls = [document.querySelector('.masthead'), document.querySelector('.ticks'), document.getElementById('subjects')];
+const shell = document.querySelector('.shell');
 
 const progress = initProgress({
   ticksEl: document.getElementById('ticks'),
@@ -21,14 +21,14 @@ let returnFocus = null;
 function openDone() {
   returnFocus = document.activeElement;
   doneEl.hidden = false;
-  pageEls.forEach(el => { el.inert = true; });
+  shell.inert = true;
   doneClose.focus();
 }
 
 function closeDone() {
   if (doneEl.hidden) return;
   doneEl.hidden = true;
-  pageEls.forEach(el => { el.inert = false; });
+  shell.inert = false;
   returnFocus?.focus?.({ preventScroll: true });
 }
 

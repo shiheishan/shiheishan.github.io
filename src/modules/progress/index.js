@@ -2,20 +2,29 @@ const pad = n => String(n).padStart(2, '0');
 const CN_DIGITS = '零一二三四五六七八九十';
 const cnCount = n => (n <= 10 ? CN_DIGITS[n] : String(n));
 
-// 报头的完成计数、摘要，以及吸顶的分段进度条
+// 报头的完成计数、摘要，以及分段进度条
 export function initProgress({ ticksEl, numEl, totalEl, summaryEl, counterEl }, state) {
   const ticks = new Map();
+  const groups = new Map();
   state.forEach(subj => {
     const group = document.createElement('div');
     group.className = 'ticks__group';
     group.style.flex = String(subj.tasks.length);
+    const row = document.createElement('div');
+    row.className = 'ticks__row';
     subj.tasks.forEach(task => {
       const tick = document.createElement('span');
       tick.className = 'ticks__tick';
-      group.appendChild(tick);
+      row.appendChild(tick);
       ticks.set(task.id, tick);
     });
+    // 宽屏时显示在每组下方的科目名
+    const label = document.createElement('span');
+    label.className = 'ticks__label';
+    label.textContent = subj.name;
+    group.append(row, label);
     ticksEl.appendChild(group);
+    groups.set(subj.id, group);
   });
 
   let prev = null;
@@ -38,9 +47,10 @@ export function initProgress({ ticksEl, numEl, totalEl, summaryEl, counterEl }, 
   }
 
   function update({ done, total, pct }) {
-    state.forEach(subj => subj.tasks.forEach(task => {
-      ticks.get(task.id).classList.toggle('is-done', task.done);
-    }));
+    state.forEach(subj => {
+      subj.tasks.forEach(task => ticks.get(task.id).classList.toggle('is-done', task.done));
+      groups.get(subj.id).classList.toggle('is-complete', subj.tasks.every(t => t.done));
+    });
     if (done !== prev) renderNum(done);
     totalEl.textContent = `/${pad(total)}`;
     summaryEl.textContent = done === total

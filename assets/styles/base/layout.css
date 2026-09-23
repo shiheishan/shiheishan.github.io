@@ -1,3 +1,6 @@
+/* 外壳：窄屏单栏（aside 不产生盒子），≥900px 左栏报头 + 右栏作业 */
+.shell__aside{ display:contents; }
+
 /* 报头：日期行 + 大标题 + 完成计数 */
 .masthead{ max-width:var(--maxw); margin:0 auto; padding:28px 20px 0; }
 .masthead__meta{
@@ -29,7 +32,7 @@
 @keyframes hw-num-up{ from{ opacity:0; transform:translateY(.45em); } to{ opacity:1; transform:none; } }
 @keyframes hw-num-down{ from{ opacity:0; transform:translateY(-.45em); } to{ opacity:1; transform:none; } }
 
-/* 吸顶进度条：每门课一组，每项作业一格 */
+/* 进度条：每门课一组、每项作业一格；窄屏吸顶 */
 .ticks{
   position:sticky; top:0; z-index:5;
   background:var(--paper-glass);
@@ -37,15 +40,38 @@
   backdrop-filter:blur(14px);
 }
 .ticks__inner{ max-width:var(--maxw); margin:0 auto; padding:12px 20px; display:flex; gap:10px; }
-.ticks__group{ display:flex; gap:3px; }
+.ticks__group{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+.ticks__row{ display:flex; gap:3px; }
 .ticks__tick{
   flex:1; height:6px; border-radius:2px; background:var(--ink-12);
   transition:background-color 260ms var(--ease);
 }
 .ticks__tick.is-done{ background:var(--accent); }
+.ticks__label{
+  display:none; font-size:12px; letter-spacing:.06em; white-space:nowrap;
+  color:var(--ink-50); transition:color 220ms;
+}
+.ticks__group.is-complete .ticks__label{ color:var(--accent); }
 
 .subjects{
-  max-width:var(--maxw); margin:0 auto; padding:12px 20px 56px;
+  max-width:var(--maxw); width:100%; margin:0 auto; padding:12px 20px 56px;
   display:flex; flex-direction:column;
 }
-.subjects::after{ content:""; border-top:1.5px solid var(--ink); }
+.subjects::after{ content:""; border-top:1.5px solid var(--rule); }
+
+@media (min-width: 900px){
+  .shell{
+    max-width:1120px; margin:0 auto; padding:0 56px;
+    display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); column-gap:88px; align-items:start;
+  }
+  .shell__aside{ display:block; position:sticky; top:0; padding:56px 0; }
+  .masthead{ max-width:none; padding:0; }
+  .masthead__main{ flex-direction:column; align-items:flex-start; gap:36px; }
+  .masthead h1{ font-size:56px; }
+  .counter__num{ font-size:120px; }
+  .counter__total{ font-size:32px; }
+  .ticks{ position:static; background:transparent; -webkit-backdrop-filter:none; backdrop-filter:none; }
+  .ticks__inner{ max-width:none; padding:28px 0 0; }
+  .ticks__label{ display:block; }
+  .subjects{ max-width:none; padding:56px 0 96px; }
+}

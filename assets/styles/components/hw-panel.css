@@ -1,7 +1,7 @@
 /* 学科：左栏科目名 + 进度，右栏作业列表 */
 .subject{
   display:grid; grid-template-columns:76px minmax(0,1fr); column-gap:12px;
-  border-top:1.5px solid var(--ink); padding:14px 0 10px;
+  border-top:1.5px solid var(--rule); padding:14px 0 10px;
 }
 .subject__head{ display:flex; flex-direction:column; gap:4px; padding-top:6px; }
 .subject__name{
@@ -57,3 +57,8 @@
 .task input:checked ~ .task__text{ color:var(--ink-50); }
 .task input:checked ~ .task__text::after{ transform:scaleX(1) rotate(-.6deg); }
 .task input:focus-visible ~ .task__box{ outline:2px solid var(--accent); outline-offset:3px; }
+
+@media (min-width: 900px){
+  .subject{ grid-template-columns:120px minmax(0,1fr); padding:18px 0 14px; }
+  .subject__name{ font-size:28px; }
+}

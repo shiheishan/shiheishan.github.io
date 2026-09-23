@@ -16,8 +16,8 @@ index.html
           └─ src/shared/dom.js        # DOM 与防抖工具
 assets/
   └─ styles/
-      ├─ theme/tokens.css     # 纸张/墨色/主题色、字体、缓动
-      ├─ base/                # 重置、报头、进度条、页面容器
+      ├─ theme/tokens.css     # 纸张/墨色/主题色（浅色 + 深色）、字体、缓动
+      ├─ base/                # 重置、报头、进度条、页面外壳（≥900px 双栏）
       └─ components/          # 作业列表（hw-panel）、完成弹窗（done）
 ```
 
