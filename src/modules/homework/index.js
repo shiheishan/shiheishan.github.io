@@ -1,15 +1,7 @@
 import { render, updateCompletion } from './render.js';
 import { debounce } from '../../shared/dom.js';
-import { flipReorder, animateAutoHeight } from '../../animations/flip.js';
-import {
-  state,
-  getState,
-  setState,
-  addSubject as add,
-  removeSubject as remove,
-  updateTask,
-  selectProgress
-} from './state.js';
+import { flipReorder } from '../../animations/flip.js';
+import { state, selectProgress } from './state.js';
 import { sortByCompleteThenSeq } from './sort.js';
 
 export function initHwPanel({ mount, onProgress }) {
@@ -45,11 +37,13 @@ export function initHwPanel({ mount, onProgress }) {
   };
 
   const debounced = debounce(() => {
-    animateAutoHeight(mount, 180);
     flipReorder(mount, '.card', () => {
+      // 移动节点会让其中的焦点丢失，排序后还给键盘用户
+      const focused = mount.contains(document.activeElement) ? document.activeElement : null;
       const items = Array.from(mount.children).sort(sortByCompleteThenSeq);
       items.forEach(el => mount.appendChild(el));
-    }, { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)', stagger: 24 });
+      focused?.focus({ preventScroll: true });
+    },{ duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)', stagger: 24 });
     syncBlur();
   }, 100);
 
@@ -72,16 +66,4 @@ export function initHwPanel({ mount, onProgress }) {
     window.addEventListener('resize', syncBlur);
     syncBlur();
   }
-
-  return { addSubject, removeSubject, updateTask, getState, setState };
 }
-
-function addSubject(subject) {
-  add(subject);
-}
-
-function removeSubject(id) {
-  remove(id);
-}
-
-export { updateTask, getState, setState };

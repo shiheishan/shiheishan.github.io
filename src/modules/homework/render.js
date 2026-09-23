@@ -15,7 +15,20 @@ export function render(mount, state) {
     ul.className = 'tasks';
     subj.tasks.forEach(task => {
       const li = document.createElement('li');
-      li.innerHTML = `\n        <label class="task">\n          <input type="checkbox" data-tid="${task.id}" ${task.done ? 'checked' : ''}/>\n          <span class="checkbox" aria-hidden="true"></span>\n          <span class="text">${task.text}</span>\n        </label>`;
+      const label = document.createElement('label');
+      label.className = 'task';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.dataset.tid = task.id;
+      input.checked = task.done;
+      const box = document.createElement('span');
+      box.className = 'checkbox';
+      box.setAttribute('aria-hidden', 'true');
+      const text = document.createElement('span');
+      text.className = 'text';
+      text.textContent = task.text;
+      label.append(input, box, text);
+      li.appendChild(label);
       ul.appendChild(li);
     });
     card.appendChild(title);
