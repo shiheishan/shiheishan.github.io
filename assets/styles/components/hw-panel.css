@@ -1,81 +1,28 @@
-.subject,
-#subjects > .card{
-  background: #fff;
-  border:1px solid var(--border); border-radius:18px;
-  box-shadow: var(--shadow);
-  padding:14px 16px; margin-bottom:14px;
+.subject{
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: 16px; margin-bottom: 14px;
   transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
   will-change: transform;
 }
-.subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
-:is(.tasks, .list){ margin:0; padding:0; list-style:none; }
-@property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
-:is(.task, .cell){ display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:12px; position:relative; }
-:is(.task, .cell):hover{ background:linear-gradient(180deg, rgba(0,0,0,.04), transparent); }
-:is(.task, .cell) input{ position:absolute; opacity:0; pointer-events:none; }
-.checkbox,
-.switch{
-  width:22px; height:22px; border-radius:8px; border:1px solid var(--border);
-  background:linear-gradient(180deg,#fff,#f3f4f6);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
-  display:inline-grid; place-items:center; flex:0 0 22px; position:relative; overflow:hidden;
-}
-.checkbox::after,
-.switch::after{
-  content:""; position:absolute; left:5px; top:11px; width:12px; height:6px;
-  border-left:3px solid var(--accent); border-bottom:3px solid var(--accent);
-  transform: rotate(-45deg) scale(0); transform-origin: left bottom;
-  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
-}
-.text{
-  position:relative; font-size:16px; letter-spacing:.2px; line-height:1.4;
-  color:var(--label);
-}
+.subject-title{ font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: .2px; margin: 8px 0 6px; }
+.tasks{ margin: 0; padding: 0; list-style: none; }
 
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .text{
-    color:transparent;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip:text;
-    background-clip:text;
-    background-image: linear-gradient(90deg,
-      rgba(0,0,0,.55) 0%,
-      rgba(0,0,0,.55) calc((var(--p)*100% - 2%)),
-      rgba(0,0,0,1) calc(var(--p)*100%),
-      rgba(0,0,0,1) 100%
-    );
-  }
-}
-.text::after{
-  content:""; position:absolute; left:0; right:0; top:50%; height:2px; border-radius:2px; background:var(--strike);
-  transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
-}
-
-.subject, #subjects > .card{
-  border: none;
-  border-radius: var(--radius-lg, 16px);
-  background: var(--surface, #fff);
-  box-shadow: var(--shadow-1);
-  padding: 16px;
-}
-.subject-title{ font-size: 20px; line-height: 1.2; font-weight: 600; margin: 8px 0 6px; }
-
-.cell{
-  min-height: 52px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--separator);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+/* 任务行：网格保证对齐与 44px 触控面积 */
 .task{
   display: grid;
   grid-template-columns: 24px 1fr;
   align-items: center;
   column-gap: 12px;
   min-height: 44px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  position: relative;
 }
+.task:hover{ background: linear-gradient(180deg, color-mix(in srgb, var(--label) 4%, transparent), transparent); }
+.task input{ position: absolute; opacity: 0; pointer-events: none; }
+
 .task .checkbox{
   width: 22px; height: 22px;
   border: 2px solid var(--separator);
@@ -86,27 +33,48 @@
   transition: border-color var(--dur-med) var(--ease-standard), background-color var(--dur-med) var(--ease-standard), transform 100ms var(--ease-standard);
 }
 .task .checkbox::after{
-  content: ""; width: 10px; height: 6px;
+  content: ""; width: 5px; height: 10px;
   border: 2px solid #fff;
   border-top: 0; border-left: 0;
-  transform: rotate(45deg) scale(0.8);
+  transform: translateY(-1px) rotate(45deg) scale(0.8);
   opacity: 0;
   transition: opacity var(--dur-med) var(--ease-standard), transform var(--dur-med) var(--ease-standard);
 }
 .task:active .checkbox{ transform: scale(.96); }
+.task input:focus-visible ~ .checkbox{ outline: 2px solid var(--tint); outline-offset: 2px; }
 
+/* 文字：勾选时 --p 从 0 过渡到 1，渐变从左往右把文字染成次要色，与删除线同步 */
+@property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
 .task .text{
+  --p: 0;
   position: relative;
   display: inline-block;
+  justify-self: start;
   font-size: 17px;
   line-height: 1.47;
-  transition: color var(--dur-med) var(--ease-standard);
+  letter-spacing: .2px;
+  color: var(--label);
+  transition: --p var(--dur-med) var(--ease-standard), color var(--dur-med) var(--ease-standard);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)){
+  .task .text{
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-image: linear-gradient(90deg,
+      var(--secondary-label) 0%,
+      var(--secondary-label) calc(var(--p) * 108% - 8%),
+      var(--label) calc(var(--p) * 108%),
+      var(--label) 100%
+    );
+  }
 }
 .task .text::after{
   content: ""; position: absolute;
   left: 0; right: 0;
-  top: 0.6em; height: 1px;
-  background: var(--strike-color, rgba(0,0,0,.5));
+  top: calc(50% - 1px); height: 2px; border-radius: 1px;
+  background: var(--strike);
   transform-origin: left center;
   transform: scaleX(0) translateZ(0);
   transition: transform var(--dur-med) var(--ease-standard);
@@ -119,20 +87,17 @@
   border-color: var(--tint);
 }
 .task input[type="checkbox"]:checked ~ .checkbox::after{
-  opacity: 1; transform: rotate(45deg) scale(1);
+  opacity: 1; transform: translateY(-1px) rotate(45deg) scale(1);
 }
 .task input[type="checkbox"]:checked ~ .text{
+  --p: 1;
+  /* 仅在不支持 background-clip:text 时生效 */
   color: var(--secondary-label);
 }
 .task input[type="checkbox"]:checked ~ .text::after{
   transform: scaleX(1) translateZ(0);
 }
 
-@media (prefers-reduced-motion: reduce){
-  .task .text, .task .text::after, .task .checkbox, .task .checkbox::after{ transition: none; }
-}
-
 @media (prefers-color-scheme: dark){
-  .task .checkbox{ border-color: var(--separator); background: var(--surface); }
-  .task .text::after{ background: color-mix(in srgb, var(--label) 55%, transparent); }
+  .task .checkbox{ border-color: color-mix(in srgb, var(--label) 28%, transparent); }
 }

@@ -5,23 +5,32 @@ import { initDonut } from '../modules/progress/index.js';
 const app = document.getElementById('app');
 const ionCanvas = document.getElementById('ion-canvas');
 const subjectsEl = document.getElementById('subjects');
+const doneClose = document.getElementById('doneClose');
+const backdropEls = [document.querySelector('.time-card'), document.querySelector('.panel')];
 const { update } = initDonut({
   ring: document.getElementById('ring'),
   text: document.getElementById('pctText'),
   donut: document.querySelector('.donut')
 });
 
+let particlesRaf = 0;
+
+function showDone() {
+  app.classList.add('show-done');
+  backdropEls.forEach(el => { el.inert = true; });
+  doneClose.focus();
+}
+
 function celebrate() {
-  if (document.body.classList.contains('disintegrate')) return;
-  document.body.classList.add('disintegrate');
-  const rect = app.getBoundingClientRect();
-  const cw = ionCanvas.width = rect.width * (window.devicePixelRatio || 1);
-  const ch = ionCanvas.height = rect.height * (window.devicePixelRatio || 1);
+  app.classList.add('is-done');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    showDone();
+    return;
+  }
+  const dpr = window.devicePixelRatio || 1;
+  const cw = ionCanvas.width = app.clientWidth * dpr;
+  const ch = ionCanvas.height = app.clientHeight * dpr;
   const ctx = ionCanvas.getContext('2d');
-  ionCanvas.style.display = 'block';
-  ionCanvas.style.position = 'absolute';
-  ionCanvas.style.left = '0';
-  ionCanvas.style.top = '0';
   const particles = [];
   const N = 320;
   for (let i = 0; i < N; i++) {
@@ -47,18 +56,39 @@ function celebrate() {
       }
     }
     if (alive > 0) {
-      requestAnimationFrame(step);
+      particlesRaf = requestAnimationFrame(step);
     } else {
-      app.classList.add('show-done');
+      particlesRaf = 0;
+      showDone();
     }
   }
-  requestAnimationFrame(step);
+  particlesRaf = requestAnimationFrame(step);
 }
+
+function dismissDone({ restoreFocus = true } = {}) {
+  if (particlesRaf) cancelAnimationFrame(particlesRaf);
+  particlesRaf = 0;
+  const wasShown = app.classList.contains('show-done');
+  app.classList.remove('show-done', 'is-done');
+  backdropEls.forEach(el => { el.inert = false; });
+  if (wasShown && restoreFocus) subjectsEl.querySelector('input')?.focus({ preventScroll: true });
+}
+
+doneClose.addEventListener('click', () => dismissDone());
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && app.classList.contains('show-done')) dismissDone();
+});
+
+let lastPct = null;
 
 initHwPanel({
   mount: subjectsEl,
   onProgress(pct) {
     update(pct);
-    if (pct === 100) celebrate();
+    // 只在从未完成变为 100% 时庆祝；初始化那次只记录
+    if (pct === 100 && lastPct !== null && lastPct < 100) celebrate();
+    // 粒子动画期间又取消了勾选：中止庆祝
+    else if (pct < 100 && app.classList.contains('is-done')) dismissDone({ restoreFocus: false });
+    lastPct = pct;
   }
 });

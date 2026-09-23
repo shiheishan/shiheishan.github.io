@@ -3,8 +3,10 @@
         display:grid; place-items:center; z-index:10; contain:paint; isolation:isolate; }
 .donut svg, .donut figcaption{ grid-area:1/1; }
 .donut circle{ fill:none; stroke-width:12; }
-.donut .track{ stroke:#e5e5ea; }
-.donut .ring{ stroke:var(--accent); transform-origin:50% 50%; transform:rotate(-90deg);
+.donut .track{ stroke:var(--donut-track); }
+/* 初始即为 0%（周长 2πr = 251.327），避免加载时圆环从满到空的回退动画 */
+.donut .ring{ stroke:var(--accent); stroke-dasharray:251.327; stroke-dashoffset:251.327;
+               transform-origin:50% 50%; transform:rotate(-90deg);
                transition: stroke-dashoffset var(--donut-dur) var(--ease-standard),
                            stroke var(--dur-med) var(--ease-standard);
                will-change:stroke-dashoffset; }

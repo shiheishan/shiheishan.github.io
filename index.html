@@ -14,8 +14,8 @@
 <body>
   <div class="app" id="app">
     <canvas id="ion-canvas"></canvas>
-    <div class="card time-card" aria-live="polite">
-      <span id="now">--:--:--</span>
+    <div class="card time-card">
+      <span id="now">--月--日 --:--</span>
     </div>
     <div class="card panel">
       <div class="panel__body" id="subjects"></div>
@@ -26,12 +26,13 @@
         <circle class="track" cx="46" cy="46" r="40" stroke-width="12"></circle>
         <circle id="ring" class="ring" cx="46" cy="46" r="40" stroke-width="12"></circle>
       </svg>
-      <figcaption id="pctText" aria-live="polite">0%</figcaption>
+      <figcaption id="pctText">0%</figcaption>
     </figure>
-    <div class="modal done-screen" id="done">
+    <div class="modal done-screen" id="done" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
       <div class="card">
-        <h1>今日任务已完成</h1>
+        <h1 id="doneTitle">今日任务已完成</h1>
         <p>请好好休息。</p>
+        <button type="button" class="done-screen__close" id="doneClose">返回</button>
       </div>
     </div>
   </div>
