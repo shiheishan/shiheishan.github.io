@@ -3,36 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    // ?theme=light|dark 强制主题，默认跟随系统
+    (function () {
+      var t = new URLSearchParams(location.search).get('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    })();
+  </script>
   <title>作业清单</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   <link rel="stylesheet" href="./assets/styles/theme/tokens.css" />
-  <link rel="stylesheet" href="./assets/styles/theme/ios-theme.css" />
   <link rel="stylesheet" href="./assets/styles/base/base.css" />
   <link rel="stylesheet" href="./assets/styles/base/layout.css" />
   <link rel="stylesheet" href="./assets/styles/components/hw-panel.css" />
-  <link rel="stylesheet" href="./assets/styles/components/donut.css" />
+  <link rel="stylesheet" href="./assets/styles/components/done.css" />
 </head>
 <body>
-  <div class="app" id="app">
-    <canvas id="ion-canvas"></canvas>
-    <div class="card time-card" aria-live="polite">
-      <span id="now">--:--:--</span>
-    </div>
-    <div class="card panel">
-      <div class="panel__body" id="subjects"></div>
-      <div class="panel__blur" aria-hidden="true"></div>
-    </div>
-    <figure class="donut" role="progressbar" aria-label="整体完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-      <svg viewBox="0 0 92 92">
-        <circle class="track" cx="46" cy="46" r="40" stroke-width="12"></circle>
-        <circle id="ring" class="ring" cx="46" cy="46" r="40" stroke-width="12"></circle>
-      </svg>
-      <figcaption id="pctText" aria-live="polite">0%</figcaption>
-    </figure>
-    <div class="modal done-screen" id="done">
-      <div class="card">
-        <h1>今日任务已完成</h1>
-        <p>请好好休息。</p>
+  <div class="shell">
+    <aside class="shell__aside">
+      <header class="masthead">
+        <div class="masthead__meta">
+          <span id="dateMono">----.--.--</span>
+          <span id="weekTime">--- --:--</span>
+        </div>
+        <div class="masthead__main">
+          <div class="masthead__title">
+            <h1>今日作业</h1>
+            <div class="masthead__summary" id="summary"></div>
+          </div>
+          <div class="counter" id="counter" role="progressbar" aria-label="整体完成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span class="counter__num" id="doneNum"></span>
+            <span class="counter__total" id="total"></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="ticks">
+        <div class="ticks__inner" id="ticks"></div>
       </div>
+    </aside>
+
+    <main class="subjects" id="subjects"></main>
+  </div>
+
+  <div class="done" id="done" role="dialog" aria-modal="true" aria-labelledby="doneTitle" hidden>
+    <div class="done__card">
+      <div class="done__stamp" aria-hidden="true">
+        <div class="done__stamp-inner">
+          <span class="done__stamp-text">完成</span>
+        </div>
+      </div>
+      <h2 class="done__title" id="doneTitle">今日任务已完成</h2>
+      <p class="done__text">请好好休息。</p>
+      <button type="button" class="done__close" id="doneClose">返回</button>
     </div>
   </div>
   <script type="module" src="./src/main.js"></script>

@@ -1,64 +1,52 @@
 import '../modules/clock/index.js';
 import { initHwPanel } from '../modules/homework/index.js';
-import { initDonut } from '../modules/progress/index.js';
+import { state } from '../modules/homework/state.js';
+import { initProgress } from '../modules/progress/index.js';
 
-const app = document.getElementById('app');
-const ionCanvas = document.getElementById('ion-canvas');
-const subjectsEl = document.getElementById('subjects');
-const { update } = initDonut({
-  ring: document.getElementById('ring'),
-  text: document.getElementById('pctText'),
-  donut: document.querySelector('.donut')
-});
+const doneEl = document.getElementById('done');
+const doneClose = document.getElementById('doneClose');
+const shell = document.querySelector('.shell');
 
-function celebrate() {
-  if (document.body.classList.contains('disintegrate')) return;
-  document.body.classList.add('disintegrate');
-  const rect = app.getBoundingClientRect();
-  const cw = ionCanvas.width = rect.width * (window.devicePixelRatio || 1);
-  const ch = ionCanvas.height = rect.height * (window.devicePixelRatio || 1);
-  const ctx = ionCanvas.getContext('2d');
-  ionCanvas.style.display = 'block';
-  ionCanvas.style.position = 'absolute';
-  ionCanvas.style.left = '0';
-  ionCanvas.style.top = '0';
-  const particles = [];
-  const N = 320;
-  for (let i = 0; i < N; i++) {
-    particles.push({
-      x: Math.random() * cw,
-      y: Math.random() * ch,
-      vx: (Math.random() - 0.5) * 2.2,
-      vy: -Math.random() * 2 - .5,
-      r: Math.random() * 2 + .6,
-      life: 1,
-    });
-  }
-  function step() {
-    ctx.clearRect(0, 0, cw, ch);
-    let alive = 0;
-    for (const p of particles) {
-      p.x += p.vx * 3; p.y += p.vy * 3; p.vy += 0.03; p.life -= 0.008;
-      if (p.life > 0) {
-        alive++;
-        ctx.globalAlpha = Math.max(0, p.life);
-        ctx.fillStyle = '#9ad6a8';
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-    if (alive > 0) {
-      requestAnimationFrame(step);
-    } else {
-      app.classList.add('show-done');
-    }
-  }
-  requestAnimationFrame(step);
+const progress = initProgress({
+  ticksEl: document.getElementById('ticks'),
+  numEl: document.getElementById('doneNum'),
+  totalEl: document.getElementById('total'),
+  summaryEl: document.getElementById('summary'),
+  counterEl: document.getElementById('counter')
+}, state);
+
+let doneTimer = 0;
+let returnFocus = null;
+
+function openDone() {
+  returnFocus = document.activeElement;
+  doneEl.hidden = false;
+  shell.inert = true;
+  doneClose.focus();
 }
 
+function closeDone() {
+  if (doneEl.hidden) return;
+  doneEl.hidden = true;
+  shell.inert = false;
+  returnFocus?.focus?.({ preventScroll: true });
+}
+
+doneClose.addEventListener('click', closeDone);
+doneEl.addEventListener('click', e => { if (e.target === doneEl) closeDone(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDone(); });
+
+let lastDone = null;
+
 initHwPanel({
-  mount: subjectsEl,
-  onProgress(pct) {
-    update(pct);
-    if (pct === 100) celebrate();
+  mount: document.getElementById('subjects'),
+  onProgress(p) {
+    progress.update(p);
+    // 从未完成变为全部完成时，等勾选动画播完再弹出；期间又改了勾选就取消
+    clearTimeout(doneTimer);
+    if (p.done === p.total && lastDone !== null && lastDone < p.total) {
+      doneTimer = setTimeout(openDone, 700);
+    }
+    lastDone = p.done;
   }
 });

@@ -1,0 +1,51 @@
+/* 完成弹窗：盖章 */
+.done{
+  position:fixed; inset:0; z-index:20;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  background:var(--paper-veil);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  animation:hw-fade 200ms ease-out;
+}
+.done[hidden]{ display:none; }
+.done__card{
+  width:100%; max-width:340px;
+  background:var(--card); border:1.5px solid var(--ink); border-radius:4px;
+  padding:36px 28px 28px;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;
+  box-shadow:6px 6px 0 var(--shadow);
+  animation:hw-rise 280ms var(--ease);
+}
+.done__stamp{
+  width:128px; height:128px; border-radius:999px; border:3px solid var(--accent);
+  display:grid; place-items:center; margin-bottom:14px;
+  transform:rotate(-14deg);
+  animation:hw-stamp 420ms 160ms var(--ease) both;
+}
+.done__stamp-inner{
+  width:112px; height:112px; border-radius:999px; border:1px solid var(--accent);
+  display:grid; place-items:center;
+}
+.done__stamp-text{
+  font-family:var(--font-serif); font-size:36px; font-weight:900; letter-spacing:.1em;
+  color:var(--accent); padding-left:.1em;
+}
+.done__title{ margin:0; font-family:var(--font-serif); font-size:24px; line-height:1.3; font-weight:700; }
+.done__text{ margin:0; font-size:15px; color:var(--ink-60); }
+.done__close{
+  margin-top:18px; width:100%; height:48px;
+  border:1.5px solid var(--btn-bg); border-radius:4px;
+  background:var(--btn-bg); color:var(--btn-fg);
+  font-size:16px; font-weight:600; letter-spacing:.1em; cursor:pointer;
+}
+.done__close:hover{ opacity:.88; }
+.done__close:active{ transform:translate(1px,1px); }
+.done__close:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+@keyframes hw-fade{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes hw-rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+@keyframes hw-stamp{
+  0%{ opacity:0; transform:rotate(-14deg) scale(1.6); }
+  60%{ opacity:1; transform:rotate(-14deg) scale(.94); }
+  100%{ opacity:1; transform:rotate(-14deg) scale(1); }
+}

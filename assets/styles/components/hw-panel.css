@@ -1,138 +1,64 @@
-.subject,
-#subjects > .card{
-  background: #fff;
-  border:1px solid var(--border); border-radius:18px;
-  box-shadow: var(--shadow);
-  padding:14px 16px; margin-bottom:14px;
-  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
-  will-change: transform;
+/* 学科：左栏科目名 + 进度，右栏作业列表 */
+.subject{
+  display:grid; grid-template-columns:76px minmax(0,1fr); column-gap:12px;
+  border-top:1.5px solid var(--rule); padding:14px 0 10px;
 }
-.subject-title{ font-weight:700; font-size:18px; margin:2px 0 8px; letter-spacing:.2px; }
-:is(.tasks, .list){ margin:0; padding:0; list-style:none; }
-@property --p{ syntax: '<number>'; initial-value: 0; inherits: false; }
-:is(.task, .cell){ display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:12px; position:relative; }
-:is(.task, .cell):hover{ background:linear-gradient(180deg, rgba(0,0,0,.04), transparent); }
-:is(.task, .cell) input{ position:absolute; opacity:0; pointer-events:none; }
-.checkbox,
-.switch{
-  width:22px; height:22px; border-radius:8px; border:1px solid var(--border);
-  background:linear-gradient(180deg,#fff,#f3f4f6);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
-  display:inline-grid; place-items:center; flex:0 0 22px; position:relative; overflow:hidden;
+.subject__head{ display:flex; flex-direction:column; gap:4px; padding-top:6px; }
+.subject__name{
+  margin:0; font-family:var(--font-serif);
+  font-size:24px; line-height:1.2; font-weight:700; letter-spacing:.06em;
+  color:var(--ink); transition:color 220ms;
 }
-.checkbox::after,
-.switch::after{
-  content:""; position:absolute; left:5px; top:11px; width:12px; height:6px;
-  border-left:3px solid var(--accent); border-bottom:3px solid var(--accent);
-  transform: rotate(-45deg) scale(0); transform-origin: left bottom;
-  transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
+.subject__meta{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; font-variant-numeric:tabular-nums;
+  color:var(--ink-50); transition:color 220ms;
 }
-.text{
-  position:relative; font-size:16px; letter-spacing:.2px; line-height:1.4;
-  color:var(--label);
-}
+.subject[data-complete="true"] .subject__name{ color:var(--ink-50); }
+.subject[data-complete="true"] .subject__meta{ color:var(--accent); }
+.tasks{ display:flex; flex-direction:column; margin:0; padding:0; list-style:none; }
 
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .text{
-    color:transparent;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip:text;
-    background-clip:text;
-    background-image: linear-gradient(90deg,
-      rgba(0,0,0,.55) 0%,
-      rgba(0,0,0,.55) calc((var(--p)*100% - 2%)),
-      rgba(0,0,0,1) calc(var(--p)*100%),
-      rgba(0,0,0,1) 100%
-    );
-  }
-}
-.text::after{
-  content:""; position:absolute; left:0; right:0; top:50%; height:2px; border-radius:2px; background:var(--strike);
-  transform: translateY(-50%) scaleX(var(--p)); transform-origin: left center; transition: transform var(--dur-med) var(--ease-standard), opacity var(--dur-med) var(--ease-standard);
-}
-
-.subject, #subjects > .card{
-  border: none;
-  border-radius: var(--radius-lg, 16px);
-  background: var(--surface, #fff);
-  box-shadow: var(--shadow-1);
-  padding: 16px;
-}
-.subject-title{ font-size: 20px; line-height: 1.2; font-weight: 600; margin: 8px 0 6px; }
-
-.cell{
-  min-height: 52px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--separator);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+/* 作业行 */
 .task{
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  align-items: center;
-  column-gap: 12px;
-  min-height: 44px;
+  position:relative; display:flex; align-items:center; gap:14px;
+  min-height:50px; padding:12px 4px;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
 }
-.task .checkbox{
-  width: 22px; height: 22px;
-  border: 2px solid var(--separator);
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  background: var(--surface);
-  transition: border-color var(--dur-med) var(--ease-standard), background-color var(--dur-med) var(--ease-standard), transform 100ms var(--ease-standard);
+.tasks > li + li .task::before{
+  content:""; position:absolute; top:0; left:0; right:0;
+  border-top:1px dashed var(--ink-20);
 }
-.task .checkbox::after{
-  content: ""; width: 10px; height: 6px;
-  border: 2px solid #fff;
-  border-top: 0; border-left: 0;
-  transform: rotate(45deg) scale(0.8);
-  opacity: 0;
-  transition: opacity var(--dur-med) var(--ease-standard), transform var(--dur-med) var(--ease-standard);
-}
-.task:active .checkbox{ transform: scale(.96); }
+.task input{ position:absolute; opacity:0; width:1px; height:1px; margin:0; pointer-events:none; }
 
-.task .text{
-  position: relative;
-  display: inline-block;
-  font-size: 17px;
-  line-height: 1.47;
-  transition: color var(--dur-med) var(--ease-standard);
+.task__box{
+  position:relative; flex:none; width:22px; height:22px;
+  border-radius:5px; border:1.5px solid var(--ink-45);
+  transition:border-color 200ms;
 }
-.task .text::after{
-  content: ""; position: absolute;
-  left: 0; right: 0;
-  top: 0.6em; height: 1px;
-  background: var(--strike-color, rgba(0,0,0,.5));
-  transform-origin: left center;
-  transform: scaleX(0) translateZ(0);
-  transition: transform var(--dur-med) var(--ease-standard);
-  pointer-events: none;
-  will-change: transform;
+.task__box::after{
+  content:""; position:absolute; left:6px; top:-5px; width:9px; height:19px;
+  border:3px solid var(--accent); border-top:0; border-left:0; border-radius:0 0 2px 0;
+  transform:rotate(42deg) scale(.4); transform-origin:60% 80%; opacity:0;
+  transition:opacity 180ms, transform 260ms cubic-bezier(.3,1.5,.5,1);
+}
+.task__text{
+  position:relative; min-width:0;
+  font-size:17px; line-height:1.45; letter-spacing:.02em;
+  color:var(--ink); transition:color 220ms; text-wrap:pretty;
+}
+.task__text::after{
+  content:""; position:absolute; left:-2px; right:-2px; top:calc(50% - 1px); height:2px;
+  border-radius:2px; background:var(--accent); opacity:.75;
+  transform-origin:left center; transform:scaleX(0) rotate(-.6deg);
+  transition:transform 260ms var(--ease);
 }
 
-.task input[type="checkbox"]:checked ~ .checkbox{
-  background: var(--tint);
-  border-color: var(--tint);
-}
-.task input[type="checkbox"]:checked ~ .checkbox::after{
-  opacity: 1; transform: rotate(45deg) scale(1);
-}
-.task input[type="checkbox"]:checked ~ .text{
-  color: var(--secondary-label);
-}
-.task input[type="checkbox"]:checked ~ .text::after{
-  transform: scaleX(1) translateZ(0);
-}
+.task input:checked ~ .task__box{ border-color:var(--ink-20); }
+.task input:checked ~ .task__box::after{ opacity:1; transform:rotate(42deg) scale(1); }
+.task input:checked ~ .task__text{ color:var(--ink-50); }
+.task input:checked ~ .task__text::after{ transform:scaleX(1) rotate(-.6deg); }
+.task input:focus-visible ~ .task__box{ outline:2px solid var(--accent); outline-offset:3px; }
 
-@media (prefers-reduced-motion: reduce){
-  .task .text, .task .text::after, .task .checkbox, .task .checkbox::after{ transition: none; }
-}
-
-@media (prefers-color-scheme: dark){
-  .task .checkbox{ border-color: var(--separator); background: var(--surface); }
-  .task .text::after{ background: color-mix(in srgb, var(--label) 55%, transparent); }
+@media (min-width: 900px){
+  .subject{ grid-template-columns:120px minmax(0,1fr); padding:18px 0 14px; }
+  .subject__name{ font-size:28px; }
 }
